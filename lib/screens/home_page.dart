@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dots_indicator/dots_indicator.dart'; // Import the DotsIndicator package
 
 void main() {
-  runApp(const MyApp());
+  runApp(HomePage());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'News Now',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomePage(),
+      debugShowCheckedModeBanner: false,
+      home: NewsPage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class NewsPage extends StatefulWidget {
+  @override
+  _NewsPageState createState() => _NewsPageState();
+}
+
+class _NewsPageState extends State<NewsPage> {
+  int currentIndexPage = 0; // Track the current page index
+  final int pageLength = 3; // Total number of pages
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
@@ -35,218 +39,189 @@ class HomePage extends StatelessWidget {
               TextSpan(
                 text: 'News',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
                   color: Colors.black,
-                  fontSize: screenWidth * 0.06, // Responsive font size
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
                 ),
               ),
               TextSpan(
                 text: 'Now',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
                   color: Colors.blue,
-                  fontSize: screenWidth * 0.06, // Responsive font size
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
                 ),
               ),
             ],
           ),
         ),
         backgroundColor: Colors.white,
-        centerTitle: true,
         elevation: 0,
+        centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildCategorySection(screenWidth, screenHeight),
-            _buildBreakingNewsSection(screenWidth, screenHeight),
-            _buildTrendingNewsSection(screenWidth, screenHeight),
-          ],
-        ),
+      body: ListView(
+        padding: EdgeInsets.all(16.0),
+        children: [
+          // Top categories section
+          SizedBox(
+            height: 100,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                buildCategoryTile('assets/images/sports.jpeg', 'SPORTS'),
+                buildCategoryTile('assets/images/business.webp', 'BUSINESS'),
+                buildCategoryTile('assets/images/bollywood.jpeg', 'BOLLYWOOD'),
+                buildCategoryTile('assets/images/tech.jpeg', 'TECH'),
+                buildCategoryTile('assets/images/Health.jpeg', 'HEALTH'),
+                buildCategoryTile('assets/images/World.jpeg', 'WORLD'),
+              ],
+            ),
+          ),
+          SizedBox(height: 0),
+
+          // Breaking News Section
+          Text(
+            'Breaking News!',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 18),
+          CarouselSlider(
+            options: CarouselOptions(
+              height: screenHeight * 0.25,
+              enlargeCenterPage: true,
+              autoPlay: true,
+              aspectRatio: 16 / 9,
+              enableInfiniteScroll: true,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  currentIndexPage = index; // Update the current index
+                });
+              },
+            ),
+            items: [
+              buildNewsSlider('assets/images/news1.jpg'),
+              buildNewsSlider('assets/images/news2.jpg'),
+              buildNewsSlider('assets/images/news3.jpg'),
+            ],
+          ),
+          // Dots Indicator
+          Center(
+            child: DotsIndicator(
+              dotsCount: pageLength,
+              position: currentIndexPage.toInt(),
+              decorator: DotsDecorator(
+                spacing: const EdgeInsets.all(10.0),
+                activeColor: Colors.blue,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+
+          SizedBox(height: 10),
+
+          // Trending News Section
+          Text(
+            'Trending News!',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            selectionColor: Colors.amberAccent,
+          ),
+          SizedBox(height: 16),
+          buildTrendingNews('assets/images/trending1.webp',
+              'Pixel 9 is the latest flagship smartphone series of Google...'),
+          buildTrendingNews('assets/images/trending2.webp',
+              'NASA has issued an urgent alert about a near Earth object...'),
+          buildTrendingNews('assets/images/trending3.jpg',
+              'NASA has issued an urgent alert about a near Earth object...'),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: '',
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bookmark),
-            label: '',
+            label: 'Bookmark',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: '',
+            label: 'Profile',
           ),
         ],
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.black54,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed,
+        onTap: (index) {
+          HomePage();
+        },
       ),
     );
   }
 
-  Widget _buildCategorySection(double screenWidth, double screenHeight) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
-      child: SizedBox(
-        height: screenHeight * 0.15,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: [
-            _buildCategoryItem('assets/images/sports.jpeg', 'SPORTS'),
-            _buildCategoryItem('assets/images/business.webp', 'BUSINESS'),
-            _buildCategoryItem('assets/images/bollywood.jpeg', 'BOLLYWOOD'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryItem(String imagePath, String title) {
+  // Helper method to build category tiles
+  Widget buildCategoryTile(String imagePath, String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(10.0),
             child: Image.asset(
               imagePath,
-              width: 80,
-              height: 80,
+              height: 60,
+              width: 60,
               fit: BoxFit.cover,
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 5),
           Text(
             title,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBreakingNewsSection(double screenWidth, double screenHeight) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Breaking News!',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          SizedBox(height: screenHeight * 0.02),
-          SizedBox(
-            height: screenHeight * 0.25,
-            child: PageView(
-              children: [
-                _buildBreakingNewsItem(
-                    'assets/images/news1.jpg', 'News Headline 1'),
-                _buildBreakingNewsItem(
-                    'assets/images/news2.jpg', 'News Headline 2'),
-                _buildBreakingNewsItem(
-                    'assets/images/news3.jpg', 'News Headline 3'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBreakingNewsItem(String imagePath, String headline) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            imagePath,
-            fit: BoxFit.cover,
-          ),
-          Container(
-            color: Colors.black.withOpacity(0.5),
-            child: Center(
-              child: Text(
-                headline,
-                style: const TextStyle(color: Colors.white, fontSize: 16),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTrendingNewsSection(double screenWidth, double screenHeight) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          vertical: screenHeight * 0.02, horizontal: screenWidth * 0.05),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Trending News!',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          SizedBox(height: screenHeight * 0.02),
-          _buildTrendingNewsItem(
-              'assets/images/trending1.webp', 'Headline 1', 'Description 1'),
-          SizedBox(height: screenHeight * 0.02),
-          _buildTrendingNewsItem(
-              'assets/images/trending2.webp', 'Headline 2', 'Description 2'),
-          SizedBox(height: screenHeight * 0.02),
-          _buildTrendingNewsItem(
-              'assets/images/trending3.jpg', 'Headline 3', 'Description 3'),
-          SizedBox(height: screenHeight * 0.02),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTrendingNewsItem(
-      String imagePath, String headline, String description) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+  // Helper method to build news slider items without headlines
+  Widget buildNewsSlider(String imagePath) {
+    return Builder(
+      builder: (BuildContext context) {
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 5.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
             child: Image.asset(
               imagePath,
-              width: 80,
+              fit: BoxFit.cover,
+              width: double.infinity,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Helper method to build trending news items
+  Widget buildTrendingNews(String imagePath, String description) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: Image.asset(
+              imagePath,
               height: 80,
+              width: 80,
               fit: BoxFit.cover,
             ),
           ),
           SizedBox(width: 10),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  headline,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                ),
-                Text(
-                  description,
-                  style: TextStyle(fontSize: 12, color: Colors.black54),
-                ),
-              ],
+            child: Text(
+              description,
+              style: TextStyle(fontSize: 14),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
