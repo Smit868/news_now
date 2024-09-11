@@ -4,17 +4,14 @@ import 'package:news_now/screens/home_page.dart';
 class Land extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Get the screen width and height
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    // Calculate responsive dimensions
-    final imageHeight = screenHeight * 0.5; // 50% of the screen height
-    final titleFontSize = screenWidth * 0.08; // 8% of the screen width
-    final subtitleFontSize = screenWidth * 0.05; // 5% of the screen width
-    final buttonFontSize = screenWidth * 0.04; // 4% of the screen width
-    final padding = screenWidth * 0.05; // 5% of the screen width for padding
-
+    final imageHeight = screenHeight * 0.7;
+    final titleFontSize = screenWidth * 0.08;
+    final subtitleFontSize = screenWidth * 0.05;
+    final buttonFontSize = screenWidth * 0.04;
+    final padding = screenWidth * 0.05;
     return Scaffold(
       body: Center(
         child: Padding(
@@ -31,7 +28,7 @@ class Land extends StatelessWidget {
                   width: double.infinity,
                 ),
               ),
-              SizedBox(height: screenHeight * 0.03), // 3% of the screen height
+              SizedBox(height: screenHeight * 0.02),
               Text(
                 'News from around the world for you',
                 textAlign: TextAlign.center,
@@ -40,7 +37,7 @@ class Land extends StatelessWidget {
                   fontSize: titleFontSize,
                 ),
               ),
-              SizedBox(height: screenHeight * 0.02), // 2% of the screen height
+              SizedBox(height: screenHeight * 0.02),
               Text(
                 'Best time to read, take your time to read a little more of this world',
                 textAlign: TextAlign.center,
@@ -49,11 +46,15 @@ class Land extends StatelessWidget {
                   color: Colors.black54,
                 ),
               ),
-              SizedBox(height: screenHeight * 0.03), // 3% of the screen height
+              SizedBox(height: screenHeight * 0.02),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -61,8 +62,7 @@ class Land extends StatelessWidget {
                   ),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: screenHeight * 0.02), // 2% of the screen height
+                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
                   child: Text(
                     'Get started',
                     style: TextStyle(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_now/land.dart';
+import 'package:news_now/landing_page.dart';
 
 void main() {
   runApp(NewsApp());
