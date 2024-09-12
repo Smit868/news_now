@@ -1,30 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dots_indicator/dots_indicator.dart'; // Import the DotsIndicator package
+import 'package:dots_indicator/dots_indicator.dart';
 
-void main() {
-  runApp(HomePage());
-}
-
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'News Now',
-      debugShowCheckedModeBanner: false,
-      home: NewsPage(),
-    );
-  }
+  _HomePageState createState() => _HomePageState();
 }
 
-class NewsPage extends StatefulWidget {
-  @override
-  _NewsPageState createState() => _NewsPageState();
-}
-
-class _NewsPageState extends State<NewsPage> {
-  int currentIndexPage = 0; // Track the current page index
-  final int pageLength = 3; // Total number of pages
+class _HomePageState extends State<HomePage> {
+  int currentIndexPage = 0;
+  final int pageLength = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +47,6 @@ class _NewsPageState extends State<NewsPage> {
       body: ListView(
         padding: EdgeInsets.all(16.0),
         children: [
-          // Top categories section
           SizedBox(
             height: 100,
             child: ListView(
@@ -134,25 +118,6 @@ class _NewsPageState extends State<NewsPage> {
               'NASA has issued an urgent alert about a near Earth object...'),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: 'Bookmark',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        onTap: (index) {
-          HomePage();
-        },
-      ),
     );
   }
 
@@ -181,7 +146,6 @@ class _NewsPageState extends State<NewsPage> {
     );
   }
 
-  // Helper method to build news slider items without headlines
   Widget buildNewsSlider(String imagePath) {
     return Builder(
       builder: (BuildContext context) {

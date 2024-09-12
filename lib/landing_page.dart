@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:news_now/main.dart';
 import 'package:news_now/screens/home_page.dart';
 
 class Land extends StatelessWidget {
@@ -52,7 +53,7 @@ class Land extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => HomePage(),
+                      builder: (context) => MainScreen(),
                     ),
                   );
                 },
