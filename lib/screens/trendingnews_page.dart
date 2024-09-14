@@ -19,9 +19,18 @@ class TrendingNewsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TRENDING NEWS'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         centerTitle: true,
-        backgroundColor: Colors.grey[850],
+        title: Text(
+          'TRENDING NEWS',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.grey[300],
         elevation: 0,
       ),
       body: ListView(
@@ -29,7 +38,8 @@ class TrendingNewsPage extends StatelessWidget {
         children: [
           // First News Item
           NewsCard(
-            imageUrl: 'https://example.com/pixel9.png',
+            imageUrl:
+                'https://storage.googleapis.com/gweb-uniblog-publish-prod/images/P9P9PThumbnail_16x9_Opt2_1.width-1000.format-webp.webp',
             title:
                 'Pixel 9 is the latest flagship smartphone series from Google',
             description:
@@ -38,7 +48,8 @@ class TrendingNewsPage extends StatelessWidget {
           SizedBox(height: 16.0),
           // Second News Item (Placeholder for example)
           NewsCard(
-            imageUrl: 'https://example.com/moon_meteor.png',
+            imageUrl:
+                'https://media.cnn.com/api/v1/images/stellar/prod/220627102635-01-nasa-moon-rocket-crater.jpg?c=original',
             title: 'New Meteor Impact on the Moon Detected by NASA',
             description:
                 'NASA recently observed a significant meteor impact on the moon, causing ripples across its surface.',

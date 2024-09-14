@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:news_now/screens/bollywood_page.dart';
 import 'package:news_now/screens/bookmark_page.dart';
+import 'package:news_now/screens/business_page.dart';
 import 'package:news_now/screens/profile_page.dart';
 import 'package:news_now/screens/sports_page.dart';
 
@@ -198,6 +200,20 @@ class HomePageContent extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => SportsPage(),
+                  ),
+                );
+              } else if (title == 'BUSINESS') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BusinessNewsPage(),
+                  ),
+                );
+              } else if (title == 'BOLLYWOOD') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => bollywoodNewsPage(),
                   ),
                 );
               }

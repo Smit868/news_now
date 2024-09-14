@@ -19,9 +19,18 @@ class RecentNewsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('RECENT NEWS'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          'RECENT NEWS',
+          style: TextStyle(color: Colors.black),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.grey[850],
+        backgroundColor: Colors.grey[300],
         elevation: 0,
       ),
       body: ListView(
@@ -29,7 +38,8 @@ class RecentNewsPage extends StatelessWidget {
         children: [
           // First News Item
           NewsCard(
-            imageUrl: 'https://example.com/justice_protest.png',
+            imageUrl:
+                'https://www.hindustantimes.com/ht-img/img/2024/09/14/550x309/India-Rape-Outrage-6_1726302161245_1726302196079.jpg',
             title: 'Kolkata doctor rape-murder case LIVE updates:',
             description:
                 'Amid nationwide protests against the rape and murder of a trainee doctor at RG Kar hospital in Kolkata, the Supreme Court is set to hear the case.',
@@ -37,7 +47,8 @@ class RecentNewsPage extends StatelessWidget {
           SizedBox(height: 16.0),
           // Second News Item (Placeholder for example)
           NewsCard(
-            imageUrl: 'https://example.com/pm_meeting.png',
+            imageUrl:
+                'https://akm-img-a-in.tosshub.com/indiatoday/images/story/202406/pm-modi-with-ukrainian-president-volodymyr-zelenskyy-142504345-16x9_0.jpg?VersionId=wBaWdcvq_rX0WAa3lWIUZlK4Fy3wr.c2',
             title: 'Indian PM meets Ukraine President for peace talks',
             description:
                 'In a historic meeting, the Indian Prime Minister welcomed the President of Ukraine for peace talks regarding ongoing conflicts.',
