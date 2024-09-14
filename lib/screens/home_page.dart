@@ -160,12 +160,26 @@ class HomePageContent extends StatelessWidget {
           selectionColor: Colors.amberAccent,
         ),
         SizedBox(height: 16),
-        buildTrendingNews('assets/images/trending1.webp',
-            'Pixel 9 is the latest flagship smartphone series of Google...'),
-        buildTrendingNews('assets/images/trending2.webp',
-            'NASA has issued an urgent alert about a near Earth object...'),
-        buildTrendingNews('assets/images/trending3.jpg',
-            'NASA has issued an urgent alert about a near Earth object...'),
+        buildBookmarkCard(
+          screenWidth,
+          'assets/images/trending1.webp',
+          'Mahindra has taken the entire country by storm with the launch of the brand-new Thar Roxx. This five-seater, five-door version of the Thar.',
+        ),
+        buildBookmarkCard(
+          screenWidth,
+          'assets/images/trending2.webp',
+          'S&P raises rating, outlook on Tata Group companies on hopes of higher support from parent.',
+        ),
+        buildBookmarkCard(
+          screenWidth,
+          'assets/images/trending3.jpg',
+          'Stree 2 Box Office Trends: Shraddha Kapoor and Rajkummar Rao\'s film enters 250 crore club in 6 days.',
+        ),
+        buildBookmarkCard(
+          screenWidth,
+          'assets/images/trending1.webp',
+          'Call Me Bae Trailer: Ananya Panday\'s relaunch reminds fans of Emily In Paris and Aisha; Janhvi, Suhana shower love.',
+        )
       ],
     );
   }
@@ -228,30 +242,38 @@ class HomePageContent extends StatelessWidget {
   }
 
   // Helper method to build trending news items
-  Widget buildTrendingNews(String imagePath, String description) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: Image.asset(
-              imagePath,
-              height: 80,
-              width: 80,
-              fit: BoxFit.cover,
+  Widget buildBookmarkCard(
+      double screenWidth, String imagePath, String description) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      margin: EdgeInsets.symmetric(vertical: 8),
+      elevation: 3,
+      child: Padding(
+        padding: EdgeInsets.all(8),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                imagePath,
+                height: 80,
+                width: screenWidth * 0.25, // 25% of screen width
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              description,
-              style: TextStyle(fontSize: 14),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                description,
+                style: TextStyle(fontSize: 14),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
