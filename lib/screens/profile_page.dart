@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:news_now/main.dart';
 import 'package:news_now/screens/home_page.dart';
+
+void main() {
+  runApp(MaterialApp(
+    home: ProfilePage(),
+  ));
+}
 
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[300],
-        elevation: 0,
+        title: Text("Profile"),
+        centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.push(
                 context,
@@ -19,66 +24,59 @@ class ProfilePage extends StatelessWidget {
                 ));
           },
         ),
-        centerTitle: true,
-        title: Text(
-          'Profile',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: 20),
+            // Profile Picture
+            CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.blue,
+            ),
+            SizedBox(height: 20),
+            // Username
+            buildTextFormField(Icons.person, "Username"),
+            // Phone Number
+            buildTextFormField(Icons.phone, "Phone Number"),
+            // Email
+            buildTextFormField(Icons.email, "E-mail"),
+            // Birthdate
+            buildTextFormField(Icons.calendar_today, "Birthdate"),
+            // Password
+            buildTextFormField(Icons.lock, "Password", isPassword: true),
+            SizedBox(height: 3),
+            // Edit Profile Button
+            ElevatedButton(
+              onPressed: () {
+                // Define button functionality
+              },
+              child: Text("Edit Profile"),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+              ),
+            ),
+          ],
         ),
       ),
-      body: Column(
-        children: [
-          // Profile section
-          Container(
-            color: Colors.grey[200],
-            padding: EdgeInsets.all(16),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: AssetImage(
-                      'assets/images/profile.jpg'), // Replace with your image asset path
-                ),
-                SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Smit Patel', // Replace with your dynamic name
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '6352804341', // Replace with your dynamic phone number
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+    );
+  }
+
+  Widget buildTextFormField(IconData icon, String label,
+      {bool isPassword = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: TextFormField(
+        obscureText: isPassword,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon),
+          labelText: label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
-          // Placeholder for other profile details
-          Expanded(
-            child: ListView.builder(
-              itemCount: 5, // Replace with the number of actual items
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  height: 50,
-                  color: Colors.black,
-                );
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
