@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:news_now/main.dart';
+import 'package:news_now/screens/Login_page.dart';
 import 'package:news_now/screens/home_page.dart';
+import 'package:news_now/screens/signup_page.dart';
 
 class Land extends StatelessWidget {
   @override
@@ -11,8 +13,9 @@ class Land extends StatelessWidget {
     final imageHeight = screenHeight * 0.7;
     final titleFontSize = screenWidth * 0.08;
     final subtitleFontSize = screenWidth * 0.05;
-    final buttonFontSize = screenWidth * 0.04;
+    final buttonFontSize = screenWidth * 0.05;
     final padding = screenWidth * 0.05;
+
     return Scaffold(
       body: Center(
         child: Padding(
@@ -48,30 +51,63 @@ class Land extends StatelessWidget {
                 ),
               ),
               SizedBox(height: screenHeight * 0.02),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(),
+              Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceEvenly, // Distribute buttons evenly
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
-                  child: Text(
-                    'Get started',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: buttonFontSize,
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                      child: Text(
+                        ' Login ',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: buttonFontSize,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignUpPage(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                      child: Text(
+                        'SignUp',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: buttonFontSize,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
