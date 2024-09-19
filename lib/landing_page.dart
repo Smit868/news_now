@@ -10,11 +10,11 @@ class Land extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final imageHeight = screenHeight * 0.7;
+    final imageHeight = screenHeight * 0.705;
     final titleFontSize = screenWidth * 0.08;
     final subtitleFontSize = screenWidth * 0.05;
     final buttonFontSize = screenWidth * 0.05;
-    final padding = screenWidth * 0.05;
+    final padding = screenWidth * 0.04;
 
     return Scaffold(
       body: Center(
