@@ -1,82 +1,71 @@
 import 'package:flutter/material.dart';
 
-class SportsPage extends StatelessWidget {
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Fetch screen dimensions
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Sportspage(),
+    );
+  }
+}
 
-    // Sample data for sports news
-    List<Map<String, String>> sportsNews = [
-      {
-        'image': 'assets/images/news1.jpg',
-        'title':
-            'CAS released a 24-page document explaining the reason behind dismissing Vinesh Phogat’s appeal for an Olympic silver medal.',
-      },
-      {
-        'image': 'assets/images/news2.jpg',
-        'title':
-            'Meanwhile, Lyon asserted that he watched Jaiswal closely during the England Tests, during which he found his batting amazing.',
-      },
-      {
-        'image': 'assets/images/news3.jpg',
-        'title':
-            'Pro Kabaddi League Player Auctions Report Card: Who got an A+?',
-      },
-      {
-        'image': 'assets/images/news1.jpg',
-        'title':
-            'Pat Cummins to take a break, unfinished business in Nathan Lyon\'s mind',
-      },
-    ];
-
+class Sportspage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[300],
-        elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         centerTitle: true,
         title: Text(
-          'SPORTS',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          'Sports News',
+          style: TextStyle(color: Colors.white),
         ),
+        backgroundColor: Colors.blue,
+        elevation: 0,
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16),
-        itemCount: sportsNews.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: buildNewsCard(
-              context,
-              sportsNews[index]['image']!,
-              sportsNews[index]['title']!,
-              screenWidth,
-            ),
-          );
-        },
+      body: ListView(
+        padding: EdgeInsets.all(8.0),
+        children: [
+          // First News Item
+          NewsCard(
+            imageUrl:
+                'https://storage.googleapis.com/gweb-uniblog-publish-prod/images/P9P9PThumbnail_16x9_Opt2_1.width-1000.format-webp.webp',
+            title:
+                'Pixel 9 is the latest flagship smartphone series from Google',
+            description:
+                'The Google Pixel 9 and the Pixel 9 Pro XL are now available for pre-order in India via Flipkart, Croma, and Reliance Digital.',
+          ),
+          SizedBox(height: 16.0),
+          // Second News Item (Placeholder for example)
+          NewsCard(
+            imageUrl:
+                'https://media.cnn.com/api/v1/images/stellar/prod/220627102635-01-nasa-moon-rocket-crater.jpg?c=original',
+            title: 'New Meteor Impact on the Moon Detected by NASA',
+            description:
+                'NASA recently observed a significant meteor impact on the moon, causing ripples across its surface.',
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        items: [
+        currentIndex: 0,
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bookmark),
-            label: 'Bookmark',
+            label: 'Saved',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -86,40 +75,61 @@ class SportsPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget buildNewsCard(BuildContext context, String imagePath, String title,
-      double screenWidth) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: Colors.grey[200],
-      ),
-      child: Row(
+class NewsCard extends StatelessWidget {
+  final String imageUrl;
+  final String title;
+  final String description;
+
+  NewsCard({
+    required this.imageUrl,
+    required this.title,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: Image.asset(
-              imagePath,
-              height: screenWidth * 0.25,
-              width: screenWidth * 0.25,
-              fit: BoxFit.cover,
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+            child: Image.network(imageUrl),
           ),
-          SizedBox(width: 10),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: screenWidth * 0.04,
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(description),
+          ),
+          ButtonBar(
+            alignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: Icon(Icons.favorite_border),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: Icon(Icons.share),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: Icon(Icons.bookmark_border),
+                onPressed: () {},
+              ),
+            ],
           ),
         ],
       ),

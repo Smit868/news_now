@@ -20,17 +20,17 @@ class bollywoodNewsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text(
-          'BOLLYWOOD',
-          style: TextStyle(color: Colors.black),
-        ),
         centerTitle: true,
-        backgroundColor: Colors.grey[300],
+        title: Text(
+          'Bollywood News',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.blue,
         elevation: 0,
       ),
       body: ListView(
@@ -38,48 +38,34 @@ class bollywoodNewsPage extends StatelessWidget {
         children: [
           // First News Item
           NewsCard(
-            imageUrl: 'https://example.com/tata_logo.png',
-            title: 'S&P raises rating, outlook on Tata Group companies',
+            imageUrl:
+                'https://storage.googleapis.com/gweb-uniblog-publish-prod/images/P9P9PThumbnail_16x9_Opt2_1.width-1000.format-webp.webp',
+            title:
+                'Pixel 9 is the latest flagship smartphone series from Google',
             description:
-                'S&P raises rating and outlook on Tata Group companies on hopes of higher support from the parent.',
+                'The Google Pixel 9 and the Pixel 9 Pro XL are now available for pre-order in India via Flipkart, Croma, and Reliance Digital.',
           ),
           SizedBox(height: 16.0),
-          // Second News Item
+          // Second News Item (Placeholder for example)
           NewsCard(
-            imageUrl: 'https://example.com/mahindra_thar.png',
-            title: 'Mahindra launches the Thar Roxx',
+            imageUrl:
+                'https://media.cnn.com/api/v1/images/stellar/prod/220627102635-01-nasa-moon-rocket-crater.jpg?c=original',
+            title: 'New Meteor Impact on the Moon Detected by NASA',
             description:
-                'Mahindra has taken the entire country by storm with the launch of the brand-new Thar Roxx. This five-seater, five-door version of the Thar is trending.',
-          ),
-          SizedBox(height: 16.0),
-          // Third News Item
-          NewsCard(
-            imageUrl: 'https://example.com/sbi_nifty.png',
-            title: 'SBI Life Insurance Climbs 5% To Top Nifty',
-            description:
-                'SBI Life Insurance climbs 5% to top the Nifty, while ONGC is the biggest drag on the index.',
-          ),
-          SizedBox(height: 16.0),
-          // Fourth News Item
-          NewsCard(
-            imageUrl: 'https://example.com/gold_rates.png',
-            title: 'Gold Rates Announced for August 19',
-            description:
-                'Gold rates announced for August 19. Check the price of 22 carat gold in your city today.',
+                'NASA recently observed a significant meteor impact on the moon, causing ripples across its surface.',
           ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        items: [
+        currentIndex: 0,
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bookmark),
-            label: 'Bookmark',
+            label: 'Saved',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -107,44 +93,43 @@ class NewsCard extends StatelessWidget {
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 100,
-            height: 100,
-            child: ClipRRect(
-              borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+            child: Image.network(imageUrl),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
             ),
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(description),
+          ),
+          ButtonBar(
+            alignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: Icon(Icons.favorite_border),
+                onPressed: () {},
               ),
-            ),
+              IconButton(
+                icon: Icon(Icons.share),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: Icon(Icons.bookmark_border),
+                onPressed: () {},
+              ),
+            ],
           ),
         ],
       ),

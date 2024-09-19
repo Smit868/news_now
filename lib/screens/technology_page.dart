@@ -9,12 +9,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: BusinessNewsPage(),
+      home: technologyPage(),
     );
   }
 }
 
-class BusinessNewsPage extends StatelessWidget {
+class technologyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +27,7 @@ class BusinessNewsPage extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          'Business News',
+          'Technology News',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.blue,

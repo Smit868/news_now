@@ -4,9 +4,13 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:news_now/screens/bollywood_page.dart';
 import 'package:news_now/screens/bookmark_page.dart';
 import 'package:news_now/screens/business_page.dart';
+import 'package:news_now/screens/health_page.dart';
 import 'package:news_now/screens/profile_page.dart';
+import 'package:news_now/screens/recentnews_page.dart';
 import 'package:news_now/screens/sports_page.dart';
+import 'package:news_now/screens/technology_page.dart';
 import 'package:news_now/screens/trendingnews_page.dart';
+import 'package:news_now/screens/world_news.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -115,7 +119,8 @@ class _HomePageContentState extends State<HomePageContent> {
                   'assets/images/business.webp', 'BUSINESS', context),
               buildCategoryTile(
                   'assets/images/bollywood.jpeg', 'BOLLYWOOD', context),
-              buildCategoryTile('assets/images/tech.jpeg', 'TECH', context),
+              buildCategoryTile(
+                  'assets/images/tech.jpeg', 'TECHNOLOGY', context),
               buildCategoryTile('assets/images/Health.jpeg', 'HEALTH', context),
               buildCategoryTile('assets/images/World.jpeg', 'WORLD', context),
             ],
@@ -182,7 +187,7 @@ class _HomePageContentState extends State<HomePageContent> {
         buildBookmarkCard(
           screenWidth,
           'assets/images/trending1.webp',
-          'Mahindra has taken the entire country by storm with the launch of the brand-new Thar Roxx. This five-seater, five-door version of the Thar.',
+          'Mahindra has taken the entire country by storm with the launch of the brand-new Thar Roxx.',
         ),
         buildBookmarkCard(
           screenWidth,
@@ -197,7 +202,7 @@ class _HomePageContentState extends State<HomePageContent> {
         buildBookmarkCard(
           screenWidth,
           'assets/images/trending1.webp',
-          'Call Me Bae Trailer: Ananya Panday\'s relaunch reminds fans of Emily In Paris and Aisha; Janhvi, Suhana shower love.',
+          'Call Me Bae Trailer: Ananya Panday\'s relaunch reminds fans of Emily In Paris and Aisha.',
         ),
       ],
     );
@@ -216,7 +221,7 @@ class _HomePageContentState extends State<HomePageContent> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SportsPage(),
+                    builder: (context) => Sportspage(),
                   ),
                 );
               } else if (title == 'BUSINESS') {
@@ -231,6 +236,27 @@ class _HomePageContentState extends State<HomePageContent> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => bollywoodNewsPage(),
+                  ),
+                );
+              } else if (title == 'TECHNOLOGY') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => technologyPage(),
+                  ),
+                );
+              } else if (title == 'HEALTH') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => healthPage(),
+                  ),
+                );
+              } else if (title == 'WORLD') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => worldPage(),
                   ),
                 );
               }
@@ -263,7 +289,7 @@ class _HomePageContentState extends State<HomePageContent> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TrendingNewsPage(),
+            builder: (context) => RecentNewsPage(),
           ),
         );
       },
@@ -305,77 +331,53 @@ class _HomePageContentState extends State<HomePageContent> {
     );
   }
 
-  // Helper method to build trending news items
+  // Helper method to build trending news items with clickable behavior
   Widget buildBookmarkCard(
       double screenWidth, String imagePath, String description) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      margin: EdgeInsets.symmetric(vertical: 8),
-      elevation: 3,
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                imagePath,
-                width: screenWidth * 0.3,
-                height: 100,
-                fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        // Navigate to NewsDetailPage when tapped
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TrendingNewsPage(),
+          ),
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: EdgeInsets.symmetric(vertical: 8),
+        elevation: 3,
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  imagePath,
+                  width: screenWidth * 0.3,
+                  height: 100,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                description,
-                style: TextStyle(fontSize: 14),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 3,
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  description,
+                  style: TextStyle(fontSize: 14),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// NewsDetailPage to show detailed news content
-class NewsDetailPage extends StatelessWidget {
-  final String imagePath;
-  final String newsTitle;
-
-  NewsDetailPage({required this.imagePath, required this.newsTitle});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('News Detail'),
-      ),
-      body: Column(
-        children: [
-          Image.asset(imagePath),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              newsTitle,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ),
-          // Additional content for the news detail
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Detailed content about the news goes here. This is just placeholder text.',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// The news detail page that will open when the trending news is tapped
