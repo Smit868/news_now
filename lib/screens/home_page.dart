@@ -6,6 +6,7 @@ import 'package:news_now/screens/bookmark_page.dart';
 import 'package:news_now/screens/business_page.dart';
 import 'package:news_now/screens/profile_page.dart';
 import 'package:news_now/screens/sports_page.dart';
+import 'package:news_now/screens/trendingnews_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -256,45 +257,51 @@ class _HomePageContentState extends State<HomePageContent> {
 
   // Method to build the news slider with image and text overlay
   Widget buildNewsSlider(String imagePath, String newsTitle) {
-    return Builder(
-      builder: (BuildContext context) {
-        return Container(
-          margin: EdgeInsets.symmetric(horizontal: 5.0),
-          child: Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.25,
-                ),
-              ),
-              // Text overlay
-              Positioned(
-                bottom: 10,
-                left: 10,
-                right: 10,
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
-                  color: Colors.black54.withOpacity(0.7),
-                  child: Text(
-                    newsTitle,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-            ],
+    return GestureDetector(
+      onTap: () {
+        // Navigate to a new page on tap
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TrendingNewsPage(),
           ),
         );
       },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 5.0),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15.0),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.25,
+              ),
+            ),
+            // Text overlay
+            Positioned(
+              bottom: 10,
+              left: 10,
+              right: 10,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
+                color: Colors.black54.withOpacity(0.7),
+                child: Text(
+                  newsTitle,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -315,8 +322,8 @@ class _HomePageContentState extends State<HomePageContent> {
               borderRadius: BorderRadius.circular(10),
               child: Image.asset(
                 imagePath,
-                height: 80,
-                width: 80,
+                width: screenWidth * 0.3,
+                height: 100,
                 fit: BoxFit.cover,
               ),
             ),
@@ -324,13 +331,50 @@ class _HomePageContentState extends State<HomePageContent> {
             Expanded(
               child: Text(
                 description,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                maxLines: 3,
+                style: TextStyle(fontSize: 14),
                 overflow: TextOverflow.ellipsis,
+                maxLines: 3,
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// NewsDetailPage to show detailed news content
+class NewsDetailPage extends StatelessWidget {
+  final String imagePath;
+  final String newsTitle;
+
+  NewsDetailPage({required this.imagePath, required this.newsTitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('News Detail'),
+      ),
+      body: Column(
+        children: [
+          Image.asset(imagePath),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              newsTitle,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+          ),
+          // Additional content for the news detail
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Detailed content about the news goes here. This is just placeholder text.',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
       ),
     );
   }
