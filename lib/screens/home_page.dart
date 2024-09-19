@@ -88,13 +88,18 @@ class _HomePageState extends State<HomePage> {
 }
 
 // Extracting Home Page content to a separate widget
-class HomePageContent extends StatelessWidget {
+class HomePageContent extends StatefulWidget {
+  @override
+  _HomePageContentState createState() => _HomePageContentState();
+}
+
+class _HomePageContentState extends State<HomePageContent> {
+  int currentIndexPage = 0;
+  final int pageLength = 3;
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    int currentIndexPage = 0;
-    final int pageLength = 3;
 
     return ListView(
       padding: EdgeInsets.all(16.0),
@@ -125,19 +130,30 @@ class HomePageContent extends StatelessWidget {
         SizedBox(height: 18),
         CarouselSlider(
           options: CarouselOptions(
-            height: screenHeight * 0.25,
+            height: MediaQuery.of(context).size.height * 0.25,
             enlargeCenterPage: true,
             autoPlay: true,
             aspectRatio: 16 / 9,
             enableInfiniteScroll: true,
             onPageChanged: (index, reason) {
-              currentIndexPage = index; // Update the current index
+              setState(() {
+                currentIndexPage = index;
+              });
             },
           ),
           items: [
-            buildNewsSlider('assets/images/news1.jpg'),
-            buildNewsSlider('assets/images/news2.jpg'),
-            buildNewsSlider('assets/images/news3.jpg'),
+            buildNewsSlider(
+              'assets/images/news1.jpg',
+              'Breaking: Major Event in City',
+            ),
+            buildNewsSlider(
+              'assets/images/news2.jpg',
+              'Business Growth Hits New Highs',
+            ),
+            buildNewsSlider(
+              'assets/images/news3.jpg',
+              'Sports Highlights: Football Finals',
+            ),
           ],
         ),
         // Dots Indicator
@@ -181,7 +197,7 @@ class HomePageContent extends StatelessWidget {
           screenWidth,
           'assets/images/trending1.webp',
           'Call Me Bae Trailer: Ananya Panday\'s relaunch reminds fans of Emily In Paris and Aisha; Janhvi, Suhana shower love.',
-        )
+        ),
       ],
     );
   }
@@ -217,7 +233,6 @@ class HomePageContent extends StatelessWidget {
                   ),
                 );
               }
-              // You can add more conditions here for other categories if needed
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
@@ -239,18 +254,44 @@ class HomePageContent extends StatelessWidget {
     );
   }
 
-  Widget buildNewsSlider(String imagePath) {
+  // Method to build the news slider with image and text overlay
+  Widget buildNewsSlider(String imagePath, String newsTitle) {
     return Builder(
       builder: (BuildContext context) {
         return Container(
           margin: EdgeInsets.symmetric(horizontal: 5.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15.0),
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-              width: double.infinity,
-            ),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.25,
+                ),
+              ),
+              // Text overlay
+              Positioned(
+                bottom: 10,
+                left: 10,
+                right: 10,
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
+                  color: Colors.black54.withOpacity(0.7),
+                  child: Text(
+                    newsTitle,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -275,7 +316,7 @@ class HomePageContent extends StatelessWidget {
               child: Image.asset(
                 imagePath,
                 height: 80,
-                width: screenWidth * 0.25, // 25% of screen width
+                width: 80,
                 fit: BoxFit.cover,
               ),
             ),
@@ -283,7 +324,7 @@ class HomePageContent extends StatelessWidget {
             Expanded(
               child: Text(
                 description,
-                style: TextStyle(fontSize: 14),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
