@@ -27,7 +27,7 @@ class TrendingNewsPage extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          'TRENDING NEWS',
+          'Trending News',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.grey[300],

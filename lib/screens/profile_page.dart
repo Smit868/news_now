@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_now/screens/home_page.dart';
+import 'package:icon/icon.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -33,6 +34,7 @@ class ProfilePage extends StatelessWidget {
             SizedBox(height: 20),
             // Profile Picture
             CircleAvatar(
+              child: Icon(Icons.person_off_outlined),
               radius: 50,
               backgroundColor: Colors.blue,
             ),

@@ -112,7 +112,11 @@ class SignUpPage extends StatelessWidget {
                 const Text('Already have an account? '),
                 GestureDetector(
                   onTap: () {
-                    // Navigate to the login page
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(),
+                        ));
                   },
                   child: const Text(
                     'Login',

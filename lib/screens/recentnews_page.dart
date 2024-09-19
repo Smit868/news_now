@@ -26,7 +26,7 @@ class RecentNewsPage extends StatelessWidget {
           },
         ),
         title: Text(
-          'RECENT NEWS',
+          'Breaking News',
           style: TextStyle(color: Colors.black),
         ),
         centerTitle: true,

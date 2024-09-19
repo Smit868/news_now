@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_now/screens/home_page.dart';
+import 'package:news_now/screens/signup_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -95,12 +96,12 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text("Don't have an account? "),
-                GestureDetector(
+                InkWell(
                   onTap: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LoginPage(),
+                          builder: (context) => SignUpPage(),
                         ));
                   },
                   child: const Text(
