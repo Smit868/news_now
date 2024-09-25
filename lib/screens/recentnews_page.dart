@@ -20,14 +20,14 @@ class RecentNewsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Colors.blue),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: Text(
           'Breaking News',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         backgroundColor: Colors.grey[300],

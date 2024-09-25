@@ -28,9 +28,9 @@ class TrendingNewsPage extends StatelessWidget {
         centerTitle: true,
         title: Text(
           'Trending News',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.blue),
         ),
-        backgroundColor: Colors.grey[300],
+        backgroundColor: Colors.white,
         elevation: 0,
       ),
       body: ListView(

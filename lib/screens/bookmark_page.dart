@@ -9,7 +9,7 @@ class BookmarkPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
@@ -25,7 +25,7 @@ class BookmarkPage extends StatelessWidget {
         title: Text(
           'BOOKMARK',
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
