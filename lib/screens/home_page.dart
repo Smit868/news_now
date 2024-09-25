@@ -12,6 +12,23 @@ import 'package:news_now/screens/technology_page.dart';
 import 'package:news_now/screens/trendingnews_page.dart';
 import 'package:news_now/screens/world_news.dart';
 
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'News Now',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: HomePage(),
+    );
+  }
+}
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -40,21 +57,26 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: _selectedIndex == 0
           ? AppBar(
+              automaticallyImplyLeading: false, // Removes the back arrow
               title: RichText(
                 text: TextSpan(
                   children: [
                     TextSpan(
                       text: 'News',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 24,
                       ),
                     ),
                     TextSpan(
+                      text: ' ', // Adding space between "News" and "Now"
+                      style: TextStyle(fontSize: 24),
+                    ),
+                    TextSpan(
                       text: 'Now',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontSize: 24,
                       ),
@@ -62,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.blue,
               elevation: 0,
               centerTitle: true,
             )
@@ -379,5 +401,3 @@ class _HomePageContentState extends State<HomePageContent> {
     );
   }
 }
-
-// The news detail page that will open when the trending news is tapped
