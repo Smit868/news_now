@@ -13,7 +13,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        title: Text("PROFILE"),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),

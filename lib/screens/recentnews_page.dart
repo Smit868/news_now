@@ -20,7 +20,7 @@ class RecentNewsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.blue),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -30,7 +30,7 @@ class RecentNewsPage extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: Colors.grey[300],
+        backgroundColor: Colors.blue,
         elevation: 0,
       ),
       body: ListView(

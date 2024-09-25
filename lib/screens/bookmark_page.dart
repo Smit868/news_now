@@ -12,7 +12,7 @@ class BookmarkPage extends StatelessWidget {
         backgroundColor: Colors.blue,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.push(
                 context,

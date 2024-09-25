@@ -20,7 +20,7 @@ class TrendingNewsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -28,9 +28,9 @@ class TrendingNewsPage extends StatelessWidget {
         centerTitle: true,
         title: Text(
           'Trending News',
-          style: TextStyle(color: Colors.blue),
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue,
         elevation: 0,
       ),
       body: ListView(
