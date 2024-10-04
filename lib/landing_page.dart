@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_now/main.dart';
 import 'package:news_now/screens/Login_page.dart';
-import 'package:news_now/screens/home_page.dart';
 import 'package:news_now/screens/signup_page.dart';
 
 class Land extends StatelessWidget {

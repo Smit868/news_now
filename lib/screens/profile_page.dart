@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_now/screens/Login_page.dart';
 import 'package:news_now/screens/home_page.dart'; // Assuming you have this file
-import 'package:icon/icon.dart'; // Assuming you are using this package
+// Assuming you are using this package
 
 void main() {
   runApp(MaterialApp(

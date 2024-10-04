@@ -38,8 +38,6 @@ class HomePageContent extends StatefulWidget {
 
 class _HomePageContentState extends State<HomePageContent> {
   int currentIndexPage = 0;
-  late Future<NewsTopHeadlineModel> _breakingNewsFuture;
-  late Future<NewsTopHeadlineModel> _trendingNewsFuture;
 
   // List of pages for navigation
   final List<Widget> _pages = [
@@ -51,8 +49,6 @@ class _HomePageContentState extends State<HomePageContent> {
   @override
   void initState() {
     super.initState();
-    _breakingNewsFuture = NewsViewModel().fetchNewsTopHeadlineModelApi();
-    _trendingNewsFuture = NewsViewModel().fetchNewsTopHeadlineModelApi();
   }
 
   @override

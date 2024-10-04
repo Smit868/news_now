@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 // Import share_plus
-import 'bookmark_page.dart'; // Import your bookmark page
+// Import your bookmark page
 
 void main() {
   runApp(MyApp());
