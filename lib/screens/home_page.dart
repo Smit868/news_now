@@ -274,22 +274,22 @@ class HomeScreen extends StatelessWidget {
     } else if (title == 'BOLLYWOOD') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => bollywoodNewsPage()),
+        MaterialPageRoute(builder: (context) => EntertainmentNewsPage()),
       );
     } else if (title == 'TECHNOLOGY') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => technologyPage()),
+        MaterialPageRoute(builder: (context) => TechnologyNewsPage()),
       );
     } else if (title == 'HEALTH') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => healthPage()),
+        MaterialPageRoute(builder: (context) => HealthNewsPage()),
       );
     } else if (title == 'WORLD') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => worldPage()),
+        MaterialPageRoute(builder: (context) => WorldNewsPage()),
       );
     }
   }
