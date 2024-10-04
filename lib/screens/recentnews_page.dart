@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+// Import share_plus
+import 'bookmark_page.dart'; // Import your bookmark page
 
 void main() {
   runApp(MyApp());
@@ -15,6 +19,24 @@ class MyApp extends StatelessWidget {
 }
 
 class RecentNewsPage extends StatelessWidget {
+  Future<List<NewsArticle>> fetchNews() async {
+    final response = await http.get(
+      Uri.parse(
+          'https://newsapi.org/v2/top-headlines?country=us&apiKey=1a261517516e45e3867d3aba993f1c6a'),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      final articles = jsonResponse['articles'] as List;
+      return articles
+          .map((article) => NewsArticle.fromJson(article))
+          .take(10) // Limit to 10 articles
+          .toList();
+    } else {
+      throw Exception('Failed to load news');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,66 +48,92 @@ class RecentNewsPage extends StatelessWidget {
           },
         ),
         title: Text(
-          'Breaking News',
+          'BREAKING NEWS',
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blue,
-        elevation: 0,
       ),
-      body: ListView(
-        padding: EdgeInsets.all(8.0),
-        children: [
-          // First News Item
-          NewsCard(
-            imageUrl:
-                'https://www.hindustantimes.com/ht-img/img/2024/09/14/550x309/India-Rape-Outrage-6_1726302161245_1726302196079.jpg',
-            title: 'Kolkata doctor rape-murder case LIVE updates:',
-            description:
-                'Amid nationwide protests against the rape and murder of a trainee doctor at RG Kar hospital in Kolkata, the Supreme Court is set to hear the case.',
-          ),
-          SizedBox(height: 16.0),
-          // Second News Item (Placeholder for example)
-          NewsCard(
-            imageUrl:
-                'https://akm-img-a-in.tosshub.com/indiatoday/images/story/202406/pm-modi-with-ukrainian-president-volodymyr-zelenskyy-142504345-16x9_0.jpg?VersionId=wBaWdcvq_rX0WAa3lWIUZlK4Fy3wr.c2',
-            title: 'Indian PM meets Ukraine President for peace talks',
-            description:
-                'In a historic meeting, the Indian Prime Minister welcomed the President of Ukraine for peace talks regarding ongoing conflicts.',
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: 'Saved',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+      body: FutureBuilder<List<NewsArticle>>(
+        future: fetchNews(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Failed to load news'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No news available'));
+          } else {
+            final articles = snapshot.data!;
+            return ListView.builder(
+              padding: EdgeInsets.all(8.0),
+              itemCount: articles.length,
+              itemBuilder: (context, index) {
+                final article = articles[index];
+                return NewsCard(article: article);
+              },
+            );
+          }
+        },
       ),
     );
   }
 }
 
-class NewsCard extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final String description;
+List<NewsArticle> bookmarkedArticles =
+    []; // Global list for bookmarked articles
 
-  NewsCard({
-    required this.imageUrl,
-    required this.title,
-    required this.description,
-  });
+class NewsCard extends StatefulWidget {
+  final NewsArticle article;
+
+  NewsCard({required this.article});
+
+  @override
+  _NewsCardState createState() => _NewsCardState();
+}
+
+class _NewsCardState extends State<NewsCard> {
+  bool liked = false;
+  int likeCount = 0;
+  bool isBookmarked = false;
+
+  void toggleButton() {
+    setState(() {
+      liked = !liked;
+      likeCount += liked ? 1 : -1;
+    });
+  }
+
+  void toggleBookmark(BuildContext context) {
+    // Check if the article is already in the bookmarked list
+    if (!bookmarkedArticles.contains(widget.article)) {
+      setState(() {
+        isBookmarked = true;
+        bookmarkedArticles
+            .add(widget.article); // Add article to bookmarked list
+      });
+      // Show snackbar: "Bookmark added"
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Bookmark added'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      // Show snackbar: "Already added in bookmark"
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Already added in bookmark'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  // void shareArticle() {
+  //   final article = widget.article;
+  //   Share.share(
+  //       'Check out this news: ${article.title}\n\n${article.description}\n\nRead more at: ${article.urlToImage}');
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -97,36 +145,47 @@ class NewsCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-            child: Image.network(imageUrl),
+            child: Image.network(widget.article.urlToImage, fit: BoxFit.cover),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              widget.article.title,
+              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(description),
+            child: Text(widget.article.description),
           ),
           ButtonBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                icon: Icon(Icons.favorite_border),
-                onPressed: () {},
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: toggleButton,
+                    child: liked
+                        ? const Icon(Icons.favorite, color: Colors.red)
+                        : const Icon(Icons.favorite_outline),
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    '$likeCount',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () => toggleBookmark(context),
+                child: Icon(
+                  isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                  color: isBookmarked ? Colors.black : null,
+                ),
               ),
               IconButton(
                 icon: Icon(Icons.share),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: Icon(Icons.bookmark_border),
-                onPressed: () {},
+                onPressed: () {}, // Implement share functionality here
               ),
             ],
           ),
@@ -134,4 +193,38 @@ class NewsCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class NewsArticle {
+  final String title;
+  final String description;
+  final String urlToImage;
+
+  NewsArticle({
+    required this.title,
+    required this.description,
+    required this.urlToImage,
+  });
+
+  factory NewsArticle.fromJson(Map<String, dynamic> json) {
+    return NewsArticle(
+      title: json['title'] ?? 'No title available',
+      description: json['description'] ?? 'No description available',
+      urlToImage: json['urlToImage'] ?? '',
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is NewsArticle &&
+        other.title == title &&
+        other.description == description &&
+        other.urlToImage == urlToImage;
+  }
+
+  @override
+  int get hashCode =>
+      title.hashCode ^ description.hashCode ^ urlToImage.hashCode;
 }

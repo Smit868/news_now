@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:news_now/Newsmodels/NewsTopHeadlineModel.dart';
+import 'package:news_now/ViewModel/NewsViewModel.dart';
 import 'package:news_now/screens/bollywood_page.dart';
 import 'package:news_now/screens/bookmark_page.dart';
 import 'package:news_now/screens/business_page.dart';
@@ -20,89 +22,86 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'News Now',
+      title: 'Responsive News App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: HomePageContent(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class HomePageContent extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePageContentState createState() => _HomePageContentState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageContentState extends State<HomePageContent> {
   int currentIndexPage = 0;
-  final int pageLength = 3;
-  int _selectedIndex = 0;
+  late Future<NewsTopHeadlineModel> _breakingNewsFuture;
+  late Future<NewsTopHeadlineModel> _trendingNewsFuture;
 
-  // List of pages to navigate to
+  // List of pages for navigation
   final List<Widget> _pages = [
-    HomePageContent(), // This is the home content without Scaffold
+    HomeScreen(),
     BookmarkPage(),
     ProfilePage(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _breakingNewsFuture = NewsViewModel().fetchNewsTopHeadlineModelApi();
+    _trendingNewsFuture = NewsViewModel().fetchNewsTopHeadlineModelApi();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _selectedIndex == 0
+      appBar: currentIndexPage == 0
           ? AppBar(
-              automaticallyImplyLeading: false, // Removes the back arrow
-              title: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'News',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
+              toolbarHeight: 50,
+              title: Center(
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'News ',
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: ' ', // Adding space between "News" and "Now"
-                      style: TextStyle(fontSize: 24),
-                    ),
-                    TextSpan(
-                      text: 'Now',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
+                      TextSpan(
+                        text: 'Now',
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              backgroundColor: Colors.blue,
-              elevation: 0,
-              centerTitle: true,
+              automaticallyImplyLeading: false,
             )
-          : null, // AppBar is only shown on the HomePage
-      body: _pages[_selectedIndex], // Switching pages based on selected index
+          : null,
+      body: _pages[currentIndexPage],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-        items: [
+        currentIndex: currentIndexPage,
+        onTap: (index) {
+          setState(() {
+            currentIndexPage = index;
+          });
+        },
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bookmark),
-            label: 'Bookmark',
+            label: 'Bookmarks',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -114,25 +113,16 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// Extracting Home Page content to a separate widget
-class HomePageContent extends StatefulWidget {
-  @override
-  _HomePageContentState createState() => _HomePageContentState();
-}
-
-class _HomePageContentState extends State<HomePageContent> {
-  int currentIndexPage = 0;
-  final int pageLength = 3;
-
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    var screenSize = MediaQuery.of(context).size;
 
     return ListView(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       children: [
         SizedBox(
-          height: 100,
+          height: screenSize.height * 0.12,
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
@@ -148,202 +138,198 @@ class _HomePageContentState extends State<HomePageContent> {
             ],
           ),
         ),
-        SizedBox(height: 0),
-
-        // Breaking News Section
+        SizedBox(height: screenSize.height * 0.00),
         Text(
           'Breaking News!',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: screenSize.shortestSide * 0.06,
+              fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 18),
-        CarouselSlider(
-          options: CarouselOptions(
-            height: MediaQuery.of(context).size.height * 0.25,
-            enlargeCenterPage: true,
-            autoPlay: true,
-            aspectRatio: 16 / 9,
-            enableInfiniteScroll: true,
-            onPageChanged: (index, reason) {
-              setState(() {
-                currentIndexPage = index;
-              });
-            },
-          ),
-          items: [
-            buildNewsSlider(
-              'assets/images/news1.jpg',
-              'Breaking: Major Event in City',
-            ),
-            buildNewsSlider(
-              'assets/images/news2.jpg',
-              'Business Growth Hits New Highs',
-            ),
-            buildNewsSlider(
-              'assets/images/news3.jpg',
-              'Sports Highlights: Football Finals',
-            ),
-          ],
+        SizedBox(height: screenSize.height * 0.02),
+        FutureBuilder<NewsTopHeadlineModel>(
+          future: NewsViewModel().fetchNewsTopHeadlineModelApi(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Text('Failed to load breaking news');
+            } else {
+              var newsList = snapshot.data!.articles!.take(10).toList();
+              return Column(
+                children: [
+                  CarouselSlider(
+                    options: CarouselOptions(
+                      height: screenSize.height * 0.25,
+                      enlargeCenterPage: true,
+                      autoPlay: true,
+                      aspectRatio: screenSize.aspectRatio,
+                      enableInfiniteScroll: true,
+                    ),
+                    items: newsList
+                        .where((article) =>
+                            article.urlToImage != null &&
+                            article.urlToImage!.isNotEmpty)
+                        .map((article) {
+                      return buildNewsSlider(
+                        article.urlToImage!,
+                        article.title ?? 'No title available',
+                        context, // Pass context here
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 8),
+                  DotsIndicator(
+                    dotsCount: newsList.length,
+                    position: 0,
+                    decorator: DotsDecorator(
+                      spacing: const EdgeInsets.all(4.0),
+                      activeColor: Colors.blue,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              );
+            }
+          },
         ),
-        // Dots Indicator
-        Center(
-          child: DotsIndicator(
-            dotsCount: pageLength,
-            position: currentIndexPage.toInt(),
-            decorator: DotsDecorator(
-              spacing: const EdgeInsets.all(10.0),
-              activeColor: Colors.blue,
-              color: Colors.grey,
-            ),
-          ),
-        ),
-
-        SizedBox(height: 10),
-
-        // Trending News Section
+        SizedBox(height: screenSize.height * 0.02),
         Text(
           'Trending News!',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          selectionColor: Colors.amberAccent,
+          style: TextStyle(
+              fontSize: screenSize.shortestSide * 0.06,
+              fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 16),
-        buildBookmarkCard(
-          screenWidth,
-          'assets/images/trending1.webp',
-          'Mahindra has taken the entire country by storm with the launch of the brand-new Thar Roxx.',
-        ),
-        buildBookmarkCard(
-          screenWidth,
-          'assets/images/trending2.webp',
-          'S&P raises rating, outlook on Tata Group companies on hopes of higher support from parent.',
-        ),
-        buildBookmarkCard(
-          screenWidth,
-          'assets/images/trending3.jpg',
-          'Stree 2 Box Office Trends: Shraddha Kapoor and Rajkummar Rao\'s film enters 250 crore club in 6 days.',
-        ),
-        buildBookmarkCard(
-          screenWidth,
-          'assets/images/trending1.webp',
-          'Call Me Bae Trailer: Ananya Panday\'s relaunch reminds fans of Emily In Paris and Aisha.',
+        SizedBox(height: screenSize.height * 0.02),
+        FutureBuilder<NewsTopHeadlineModel>(
+          future: NewsViewModel().fetchNewsTopHeadlineModelApi(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Text('Failed to load trending news');
+            } else {
+              var newsList = snapshot.data!.articles!.take(10).toList();
+              return Column(
+                children: newsList
+                    .where((article) =>
+                        article.urlToImage != null &&
+                        article.urlToImage!.isNotEmpty)
+                    .map((article) {
+                  return buildBookmarkCard(
+                    context,
+                    screenSize.width,
+                    article.urlToImage!,
+                    article.title ?? 'No title available',
+                  );
+                }).toList(),
+              );
+            }
+          },
         ),
       ],
     );
   }
 
-  // Helper method to build category tiles
   Widget buildCategoryTile(
       String imagePath, String title, BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+    var imageSize = screenSize.width * 0.16;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           InkWell(
             onTap: () {
-              if (title == 'SPORTS') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Sportspage(),
-                  ),
-                );
-              } else if (title == 'BUSINESS') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BusinessNewsPage(),
-                  ),
-                );
-              } else if (title == 'BOLLYWOOD') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => bollywoodNewsPage(),
-                  ),
-                );
-              } else if (title == 'TECHNOLOGY') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => technologyPage(),
-                  ),
-                );
-              } else if (title == 'HEALTH') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => healthPage(),
-                  ),
-                );
-              } else if (title == 'WORLD') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => worldPage(),
-                  ),
-                );
-              }
+              _navigateToCategoryPage(title, context);
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
               child: Image.asset(
                 imagePath,
-                height: 60,
-                width: 60,
+                height: imageSize,
+                width: imageSize,
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
           ),
         ],
       ),
     );
   }
 
-  // Method to build the news slider with image and text overlay
-  Widget buildNewsSlider(String imagePath, String newsTitle) {
+  void _navigateToCategoryPage(String title, BuildContext context) {
+    if (title == 'SPORTS') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Sportspage()),
+      );
+    } else if (title == 'BUSINESS') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => BusinessNewsPage()),
+      );
+    } else if (title == 'BOLLYWOOD') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => bollywoodNewsPage()),
+      );
+    } else if (title == 'TECHNOLOGY') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => technologyPage()),
+      );
+    } else if (title == 'HEALTH') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => healthPage()),
+      );
+    } else if (title == 'WORLD') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => worldPage()),
+      );
+    }
+  }
+
+  Widget buildNewsSlider(
+      String imagePath, String newsTitle, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to a new page on tap
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => RecentNewsPage(),
-          ),
+          MaterialPageRoute(builder: (context) => RecentNewsPage()),
         );
       },
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 5.0),
-        child: Stack(
+        margin: const EdgeInsets.symmetric(horizontal: 5.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          image: DecorationImage(
+            image: NetworkImage(imagePath),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.end, // Align the text to the bottom
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15.0),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.25,
-              ),
-            ),
-            // Text overlay
-            Positioned(
-              bottom: 10,
-              left: 10,
-              right: 10,
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
-                color: Colors.black54.withOpacity(0.7),
-                child: Text(
-                  newsTitle,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+            Container(
+              width:
+                  double.infinity, // Ensure the text container takes full width
+              padding: const EdgeInsets.all(8.0),
+              color: Colors.black54,
+              child: Text(
+                newsTitle,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
                 ),
               ),
             ),
@@ -353,49 +339,44 @@ class _HomePageContentState extends State<HomePageContent> {
     );
   }
 
-  // Helper method to build trending news items with clickable behavior
   Widget buildBookmarkCard(
-      double screenWidth, String imagePath, String description) {
+      BuildContext context, double width, String imageUrl, String newsTitle) {
     return GestureDetector(
       onTap: () {
-        // Navigate to NewsDetailPage when tapped
+        // Navigate to the TrendingNewsPage when the card is tapped
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => TrendingNewsPage(),
-          ),
+          MaterialPageRoute(builder: (context) => TrendingNewsPage()),
         );
       },
       child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        margin: EdgeInsets.symmetric(vertical: 8),
-        elevation: 3,
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  imagePath,
-                  width: screenWidth * 0.3,
-                  height: 100,
+        child: Row(
+          children: [
+            // Adding Padding around the image
+            Padding(
+              padding: const EdgeInsets.all(8.0), // Add padding as needed
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                    8.0), // Optional: Round the image corners
+                child: Image.network(
+                  imageUrl,
+                  width: width * 0.3,
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(width: 10),
-              Expanded(
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  description,
-                  style: TextStyle(fontSize: 14),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
+                  newsTitle,
+                  maxLines: 2, // Limit the text to two lines
+                  overflow: TextOverflow.ellipsis, // Handle overflow
+                  style: TextStyle(fontSize: 16.0), // Optional styling
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

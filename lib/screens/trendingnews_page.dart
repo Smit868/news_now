@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+// Import share_plus
+import 'bookmark_page.dart'; // Import your bookmark page
 
 void main() {
   runApp(MyApp());
@@ -15,6 +19,23 @@ class MyApp extends StatelessWidget {
 }
 
 class TrendingNewsPage extends StatelessWidget {
+  Future<List<NewsArticle>> fetchTrendingNews() async {
+    final response = await http.get(Uri.parse(
+        'https://newsapi.org/v2/top-headlines?country=us&apiKey=1a261517516e45e3867d3aba993f1c6a'));
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> articlesJson = jsonResponse['articles'];
+
+      // Convert to List of NewsArticle objects
+      return articlesJson.map((articleJson) {
+        return NewsArticle.fromJson(articleJson);
+      }).toList();
+    } else {
+      throw Exception('Failed to load trending news');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,60 +54,83 @@ class TrendingNewsPage extends StatelessWidget {
         backgroundColor: Colors.blue,
         elevation: 0,
       ),
-      body: ListView(
-        padding: EdgeInsets.all(8.0),
-        children: [
-          // First News Item
-          NewsCard(
-            imageUrl:
-                'https://storage.googleapis.com/gweb-uniblog-publish-prod/images/P9P9PThumbnail_16x9_Opt2_1.width-1000.format-webp.webp',
-            title:
-                'Pixel 9 is the latest flagship smartphone series from Google',
-            description:
-                'The Google Pixel 9 and the Pixel 9 Pro XL are now available for pre-order in India via Flipkart, Croma, and Reliance Digital.',
-          ),
-          SizedBox(height: 16.0),
-          // Second News Item (Placeholder for example)
-          NewsCard(
-            imageUrl:
-                'https://media.cnn.com/api/v1/images/stellar/prod/220627102635-01-nasa-moon-rocket-crater.jpg?c=original',
-            title: 'New Meteor Impact on the Moon Detected by NASA',
-            description:
-                'NASA recently observed a significant meteor impact on the moon, causing ripples across its surface.',
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: 'Saved',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+      body: FutureBuilder<List<NewsArticle>>(
+        future: fetchTrendingNews(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Failed to load trending news'));
+          } else {
+            final articles = snapshot.data!;
+            return ListView.builder(
+              padding: EdgeInsets.all(8.0),
+              itemCount: articles.length,
+              itemBuilder: (context, index) {
+                return NewsCard(article: articles[index]);
+              },
+            );
+          }
+        },
       ),
     );
   }
 }
 
-class NewsCard extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final String description;
+List<NewsArticle> bookmarkedArticles =
+    []; // Global list for bookmarked articles
 
-  NewsCard({
-    required this.imageUrl,
-    required this.title,
-    required this.description,
-  });
+class NewsCard extends StatefulWidget {
+  final NewsArticle article;
+
+  NewsCard({required this.article});
+
+  @override
+  _NewsCardState createState() => _NewsCardState();
+}
+
+class _NewsCardState extends State<NewsCard> {
+  bool liked = false;
+  int likeCount = 0;
+  bool isBookmarked = false;
+
+  void toggleButton() {
+    setState(() {
+      liked = !liked;
+      likeCount += liked ? 1 : -1;
+    });
+  }
+
+  void toggleBookmark(BuildContext context) {
+    if (!bookmarkedArticles.contains(widget.article)) {
+      setState(() {
+        isBookmarked = true;
+        bookmarkedArticles
+            .add(widget.article); // Add article to bookmarked list
+      });
+      // Show snackbar: "Bookmark added"
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Bookmark added'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      // Show snackbar: "Already added in bookmark"
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Already added in bookmark'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  // void shareArticle() {
+  //   final article = widget.article;
+  //   Share.share(
+  //       'Check out this news: ${article.title}\n\n${article.description}\n\nRead more at: ${article.urlToImage}');
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -98,36 +142,47 @@ class NewsCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-            child: Image.network(imageUrl),
+            child: Image.network(widget.article.urlToImage, fit: BoxFit.cover),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              widget.article.title,
+              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(description),
+            child: Text(widget.article.description),
           ),
           ButtonBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                icon: Icon(Icons.favorite_border),
-                onPressed: () {},
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: toggleButton,
+                    child: liked
+                        ? const Icon(Icons.favorite, color: Colors.red)
+                        : const Icon(Icons.favorite_outline),
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    '$likeCount',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () => toggleBookmark(context),
+                child: Icon(
+                  isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                  color: isBookmarked ? Colors.black : null,
+                ),
               ),
               IconButton(
                 icon: Icon(Icons.share),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: Icon(Icons.bookmark_border),
-                onPressed: () {},
+                onPressed: () {}, // Implement share functionality here
               ),
             ],
           ),
@@ -135,4 +190,38 @@ class NewsCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class NewsArticle {
+  final String title;
+  final String description;
+  final String urlToImage;
+
+  NewsArticle({
+    required this.title,
+    required this.description,
+    required this.urlToImage,
+  });
+
+  factory NewsArticle.fromJson(Map<String, dynamic> json) {
+    return NewsArticle(
+      title: json['title'] ?? 'No title available',
+      description: json['description'] ?? 'No description available',
+      urlToImage: json['urlToImage'] ?? '',
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is NewsArticle &&
+        other.title == title &&
+        other.description == description &&
+        other.urlToImage == urlToImage;
+  }
+
+  @override
+  int get hashCode =>
+      title.hashCode ^ description.hashCode ^ urlToImage.hashCode;
 }
