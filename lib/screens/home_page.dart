@@ -126,7 +126,7 @@ class HomeScreen extends StatelessWidget {
               buildCategoryTile(
                   'assets/images/business.webp', 'BUSINESS', context),
               buildCategoryTile(
-                  'assets/images/bollywood.jpeg', 'BOLLYWOOD', context),
+                  'assets/images/hollywood.jpg', 'HOLLYWOOD', context),
               buildCategoryTile(
                   'assets/images/tech.jpeg', 'TECHNOLOGY', context),
               buildCategoryTile('assets/images/Health.jpeg', 'HEALTH', context),

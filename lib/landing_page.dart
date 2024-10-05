@@ -25,7 +25,7 @@ class Land extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(30.0),
                   child: Image.asset(
-                    'assets/images/indiagate.jpg',
+                    'assets/images/liberty.jpg',
                     fit: BoxFit.cover,
                     height: imageHeight,
                     width: double.infinity,
