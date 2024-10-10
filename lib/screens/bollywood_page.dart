@@ -37,8 +37,7 @@ class _EntertainmentNewsPageState extends State<EntertainmentNewsPage> {
           },
         ),
         centerTitle: true,
-        title:
-            Text('ENTERTAINMENT NEWS', style: TextStyle(color: Colors.white)),
+        title: Text('HOLLYWOOD NEWS', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.blue,
       ),
       body: FutureBuilder<List<NewsArticle>>(

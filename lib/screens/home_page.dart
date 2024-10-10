@@ -271,7 +271,7 @@ class HomeScreen extends StatelessWidget {
         context,
         MaterialPageRoute(builder: (context) => BusinessNewsPage()),
       );
-    } else if (title == 'BOLLYWOOD') {
+    } else if (title == 'HOLLYWOOD') {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => EntertainmentNewsPage()),
