@@ -1,15 +1,21 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:news_now/screens/Login_page.dart';
-import 'package:news_now/screens/home_page.dart'; // Assuming you have this file
-// Assuming you are using this package
-
-void main() {
-  runApp(MaterialApp(
-    home: ProfilePage(),
-  ));
-}
+import 'package:news_now/screens/home_page.dart';
 
 class ProfilePage extends StatelessWidget {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _signOut(BuildContext context) async {
+    await _auth.signOut();
+    // Navigate to LoginPage and pass the flag to show the SnackBar
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => LoginPage(showLogoutMessage: true)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +29,7 @@ class ProfilePage extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => HomePageContent(), // Navigate to HomePage
+                builder: (context) => HomePageContent(),
               ),
             );
           },
@@ -36,25 +42,18 @@ class ProfilePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 20),
-              // Profile Picture
               CircleAvatar(
                 child: Icon(Icons.person_off_outlined),
                 radius: 50,
                 backgroundColor: Colors.blue,
               ),
               SizedBox(height: 20),
-              // Username
               buildTextFormField(Icons.person, "Username"),
-              // Phone Number
               buildTextFormField(Icons.phone, "Phone Number"),
-              // Email
               buildTextFormField(Icons.email, "E-mail"),
-              // Birthdate
               buildTextFormField(Icons.calendar_today, "Birthdate"),
-              // Password
               buildTextFormField(Icons.lock, "Password", isPassword: true),
               SizedBox(height: 5),
-              // Edit Profile Button
               ElevatedButton(
                 onPressed: () {
                   // Define button functionality
@@ -65,20 +64,13 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              // Logout Button
               ElevatedButton(
                 onPressed: () {
-                  // Navigate to the logout page
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginPage(), // Define LogoutPage
-                    ),
-                  );
+                  _signOut(context);
                 },
                 child: Text("Logout"),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.red, // Red color for Logout button
+                  primary: Colors.red,
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 ),
               ),
@@ -89,7 +81,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Helper method to build TextFormFields
   Widget buildTextFormField(IconData icon, String label,
       {bool isPassword = false}) {
     return Padding(

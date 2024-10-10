@@ -26,12 +26,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePageContent(),
+      home: HomePageContent(
+          showLoginSuccessMessage: true), // Set flag based on login
     );
   }
 }
 
 class HomePageContent extends StatefulWidget {
+  final bool showLoginSuccessMessage;
+
+  HomePageContent({this.showLoginSuccessMessage = false});
+
   @override
   _HomePageContentState createState() => _HomePageContentState();
 }
@@ -49,6 +54,17 @@ class _HomePageContentState extends State<HomePageContent> {
   @override
   void initState() {
     super.initState();
+    if (widget.showLoginSuccessMessage) {
+      // Show "Login successfully" SnackBar if the flag is true
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login successfully!'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      });
+    }
   }
 
   @override
@@ -59,7 +75,7 @@ class _HomePageContentState extends State<HomePageContent> {
               toolbarHeight: 50,
               title: Center(
                 child: RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     children: [
                       TextSpan(
                         text: 'News ',
@@ -368,7 +384,7 @@ class HomeScreen extends StatelessWidget {
                   newsTitle,
                   maxLines: 2, // Limit the text to two lines
                   overflow: TextOverflow.ellipsis, // Handle overflow
-                  style: TextStyle(fontSize: 16.0), // Optional styling
+                  style: const TextStyle(fontSize: 16.0), // Optional styling
                 ),
               ),
             ),
