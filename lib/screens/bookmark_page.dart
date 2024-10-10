@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:news_now/main.dart';
 import 'package:news_now/screens/home_page.dart';
+// import 'package:share_plus/share_plus.dart'; // Import share_plus
 
-class BookmarkPage extends StatelessWidget {
+import 'recentnews_page.dart'; // Import the main file where your `bookmarkedArticles` is defined
+
+class BookmarkPage extends StatefulWidget {
+  @override
+  _BookmarkPageState createState() => _BookmarkPageState();
+}
+
+class _BookmarkPageState extends State<BookmarkPage> {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 50,
         backgroundColor: Colors.blue,
         elevation: 0,
         leading: IconButton(
@@ -17,8 +23,8 @@ class BookmarkPage extends StatelessWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => HomePage(),
-                ));
+                    builder: ((context) =>
+                        HomePageContent()))); // Go back to the previous page
           },
         ),
         centerTitle: true,
@@ -27,70 +33,94 @@ class BookmarkPage extends StatelessWidget {
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: 20, // Adjusted font size
           ),
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.all(16),
-        children: [
-          buildBookmarkCard(
-            screenWidth,
-            'assets/images/news1.jpg',
-            'Mahindra has taken the entire country by storm with the launch of the brand-new Thar Roxx. This five-seater, five-door version of the Thar.',
-          ),
-          buildBookmarkCard(
-            screenWidth,
-            'assets/images/news2.jpg',
-            'S&P raises rating, outlook on Tata Group companies on hopes of higher support from parent.',
-          ),
-          buildBookmarkCard(
-            screenWidth,
-            'assets/images/news3.jpg',
-            'Stree 2 Box Office Trends: Shraddha Kapoor and Rajkummar Rao\'s film enters 250 crore club in 6 days.',
-          ),
-          buildBookmarkCard(
-            screenWidth,
-            'assets/images/trending2.webp',
-            'Call Me Bae Trailer: Ananya Panday\'s relaunch reminds fans of Emily In Paris and Aisha; Janhvi, Suhana shower love.',
-          ),
-        ],
-      ),
+      body: bookmarkedArticles.isEmpty
+          ? Center(
+              child: Text(
+                'No bookmarks available',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+              ),
+            )
+          : ListView.builder(
+              padding: EdgeInsets.all(16),
+              itemCount: bookmarkedArticles.length,
+              itemBuilder: (context, index) {
+                final article = bookmarkedArticles[index];
+                return BookmarkNewsCard(
+                  article: article,
+                  onBookmarkRemoved: () {
+                    // Remove the article from bookmarks
+                    setState(() {
+                      bookmarkedArticles.remove(article);
+                    });
+                    // Show "Bookmark removed" snackbar
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Bookmark removed'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
     );
   }
+}
 
-  Widget buildBookmarkCard(
-      double screenWidth, String imagePath, String description) {
+class BookmarkNewsCard extends StatelessWidget {
+  final NewsArticle article;
+  final VoidCallback onBookmarkRemoved;
+
+  BookmarkNewsCard({required this.article, required this.onBookmarkRemoved});
+
+  // void shareArticle() {
+  //   Share.share(
+  //       'Check out this news: ${article.title}\n\n${article.description}\n\nRead more at: ${article.urlToImage}');
+  // }
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      margin: EdgeInsets.symmetric(vertical: 8),
-      elevation: 3,
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                imagePath,
-                height: 80,
-                width: screenWidth * 0.25, // 25% of screen width
-                fit: BoxFit.cover,
-              ),
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+            child: Image.network(article.urlToImage, fit: BoxFit.cover),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              article.title,
+              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
             ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                description,
-                style: TextStyle(fontSize: 14),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(article.description),
+          ),
+          ButtonBar(
+            alignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: Icon(Icons.bookmark_remove),
+                onPressed: () {
+                  onBookmarkRemoved();
+                },
               ),
-            ),
-          ],
-        ),
+              IconButton(
+                icon: Icon(Icons.share),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

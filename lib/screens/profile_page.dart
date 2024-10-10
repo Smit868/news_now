@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_now/screens/Login_page.dart';
 import 'package:news_now/screens/home_page.dart'; // Assuming you have this file
-import 'package:icon/icon.dart'; // Assuming you are using this package
+// Assuming you are using this package
 
 void main() {
   runApp(MaterialApp(
@@ -14,6 +14,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 50,
         title: Text("PROFILE"),
         centerTitle: true,
         leading: IconButton(
@@ -22,7 +23,7 @@ class ProfilePage extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => HomePage(), // Navigate to HomePage
+                builder: (context) => HomePageContent(), // Navigate to HomePage
               ),
             );
           },

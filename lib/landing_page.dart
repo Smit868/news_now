@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_now/main.dart';
 import 'package:news_now/screens/Login_page.dart';
-import 'package:news_now/screens/home_page.dart';
 import 'package:news_now/screens/signup_page.dart';
 
 class Land extends StatelessWidget {
@@ -27,7 +25,7 @@ class Land extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(30.0),
                   child: Image.asset(
-                    'assets/images/indiagate.jpg',
+                    'assets/images/liberty.jpg',
                     fit: BoxFit.cover,
                     height: imageHeight,
                     width: double.infinity,
