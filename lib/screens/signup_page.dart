@@ -25,17 +25,17 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> _signUp() async {
     try {
-      // Sign up user using email and password
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
 
-      // If sign up is successful, navigate to LoginPage
       if (userCredential.user != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Sign up successful! ')),
+          const SnackBar(
+            content: Text('Account created! Please log in.'),
+          ),
         );
         Navigator.pushReplacement(
           context,
@@ -44,7 +44,9 @@ class _SignUpPageState extends State<SignUpPage> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to sign up')),
+        SnackBar(
+          content: Text('Error: $e'),
+        ),
       );
     }
   }
@@ -53,14 +55,8 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Sign Up'),
         centerTitle: true,
-        title: const Text('SIGN UP'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back), // Back arrow icon
-          onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous page
-          },
-        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -69,10 +65,7 @@ class _SignUpPageState extends State<SignUpPage> {
           children: [
             const Text(
               'Sign Up Page',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 40),
             TextField(
@@ -102,8 +95,8 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             const SizedBox(height: 20),
             TextField(
-              obscureText: true,
               controller: _passwordController,
+              obscureText: true,
               decoration: InputDecoration(
                 hintText: 'Password',
                 filled: true,
@@ -123,10 +116,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: const Text(
-                'Sign Up',
-                style: TextStyle(fontSize: 18),
-              ),
+              child: const Text('Sign Up', style: TextStyle(fontSize: 18)),
             ),
             const SizedBox(height: 20),
             Row(
@@ -141,7 +131,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     );
                   },
                   child: const Text(
-                    'Login',
+                    'Log In',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.blue,

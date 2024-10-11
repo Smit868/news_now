@@ -27,7 +27,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    // Show SnackBar when the user is logged out
     if (widget.showLogoutMessage) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -56,10 +55,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
 
       Navigator.pushReplacement(
         context,
@@ -101,10 +97,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             const Text(
               'Login Page',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 40),
             TextField(
@@ -142,10 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: const Text(
-                'Login',
-                style: TextStyle(fontSize: 18),
-              ),
+              child: const Text('Login', style: TextStyle(fontSize: 18)),
             ),
             const SizedBox(height: 20),
             Row(
