@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-// Use the shared bookmark page
 
 // Global list for bookmarked articles (same as in other news pages)
 List<NewsArticle> bookmarkedArticles = [];
@@ -87,24 +86,21 @@ class NewsCard extends StatefulWidget {
 
 class _NewsCardState extends State<NewsCard> {
   bool liked = false;
-  int likeCount = 0;
   bool isBookmarked = false;
 
   // Toggle the like button
   void toggleLike() {
     setState(() {
       liked = !liked;
-      likeCount += liked ? 1 : -1;
     });
   }
 
   // Toggle bookmark functionality
   void toggleBookmark(BuildContext context) {
-    // Check if the article is already in the bookmarked list
     if (!bookmarkedArticles.contains(widget.article)) {
       setState(() {
         isBookmarked = true;
-        bookmarkedArticles.add(widget.article); // Add to bookmarked list
+        bookmarkedArticles.add(widget.article);
       });
       // Show snackbar: "Bookmark added"
       ScaffoldMessenger.of(context).showSnackBar(
@@ -154,20 +150,12 @@ class _NewsCardState extends State<NewsCard> {
           ButtonBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: toggleLike,
-                    child: liked
-                        ? const Icon(Icons.favorite, color: Colors.red)
-                        : const Icon(Icons.favorite_outline),
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    '$likeCount',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
+              GestureDetector(
+                onTap: toggleLike,
+                child: Icon(
+                  liked ? Icons.favorite : Icons.favorite_outline,
+                  color: liked ? Colors.red : null,
+                ),
               ),
               GestureDetector(
                 onTap: () => toggleBookmark(context),
@@ -190,7 +178,7 @@ class _NewsCardState extends State<NewsCard> {
   }
 }
 
-// NewsArticle model (same as in other news pages)
+// NewsArticle model
 class NewsArticle {
   final String title;
   final String description;

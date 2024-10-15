@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-// Import share_plus
 // Import your bookmark page
 
 void main() {
@@ -91,13 +90,11 @@ class NewsCard extends StatefulWidget {
 
 class _NewsCardState extends State<NewsCard> {
   bool liked = false;
-  int likeCount = 0;
   bool isBookmarked = false;
 
   void toggleButton() {
     setState(() {
       liked = !liked;
-      likeCount += liked ? 1 : -1;
     });
   }
 
@@ -126,12 +123,6 @@ class _NewsCardState extends State<NewsCard> {
     }
   }
 
-  // void shareArticle() {
-  //   final article = widget.article;
-  //   Share.share(
-  //       'Check out this news: ${article.title}\n\n${article.description}\n\nRead more at: ${article.urlToImage}');
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -140,10 +131,12 @@ class _NewsCardState extends State<NewsCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Image display
           ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
             child: Image.network(widget.article.urlToImage, fit: BoxFit.cover),
           ),
+          // Title display
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
@@ -151,28 +144,23 @@ class _NewsCardState extends State<NewsCard> {
               style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
             ),
           ),
+          // Description display
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(widget.article.description),
           ),
+          // Like, bookmark, and share buttons
           ButtonBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: toggleButton,
-                    child: liked
-                        ? const Icon(Icons.favorite, color: Colors.red)
-                        : const Icon(Icons.favorite_outline),
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    '$likeCount',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
+              // Like button
+              GestureDetector(
+                onTap: toggleButton,
+                child: liked
+                    ? const Icon(Icons.favorite, color: Colors.red)
+                    : const Icon(Icons.favorite_outline),
               ),
+              // Bookmark button
               GestureDetector(
                 onTap: () => toggleBookmark(context),
                 child: Icon(
@@ -180,6 +168,7 @@ class _NewsCardState extends State<NewsCard> {
                   color: isBookmarked ? Colors.black : null,
                 ),
               ),
+              // Share button
               IconButton(
                 icon: Icon(Icons.share),
                 onPressed: () {}, // Implement share functionality here

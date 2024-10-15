@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:news_now/screens/business_page.dart';
 import 'dart:convert';
-// Shared bookmark page
+
+// Global list for bookmarked articles (shared across different pages)
+List<NewsArticle> bookmarkedArticles = [];
 
 class TechnologyNewsPage extends StatefulWidget {
   @override
@@ -10,6 +11,7 @@ class TechnologyNewsPage extends StatefulWidget {
 }
 
 class _TechnologyNewsPageState extends State<TechnologyNewsPage> {
+  // Fetching technology news with API
   Future<List<NewsArticle>> fetchTechnologyNews() async {
     final response = await http.get(Uri.parse(
         'https://newsapi.org/v2/top-headlines?category=technology&country=us&apiKey=1a261517516e45e3867d3aba993f1c6a'));
@@ -64,4 +66,144 @@ class _TechnologyNewsPageState extends State<TechnologyNewsPage> {
       ),
     );
   }
+}
+
+// NewsCard widget for displaying individual news items
+class NewsCard extends StatefulWidget {
+  final NewsArticle article;
+
+  NewsCard({required this.article});
+
+  @override
+  _NewsCardState createState() => _NewsCardState();
+}
+
+class _NewsCardState extends State<NewsCard> {
+  bool liked = false;
+  bool isBookmarked = false;
+
+  // Toggle the like button
+  void toggleLike() {
+    setState(() {
+      liked = !liked;
+    });
+  }
+
+  // Toggle bookmark functionality
+  void toggleBookmark(BuildContext context) {
+    // Check if the article is already in the bookmarked list
+    if (!bookmarkedArticles.contains(widget.article)) {
+      setState(() {
+        isBookmarked = true;
+        bookmarkedArticles.add(widget.article); // Add to bookmarked list
+      });
+      // Show snackbar: "Bookmark added"
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Bookmark added'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      // Show snackbar: "Already added in bookmark"
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Already bookmarked'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image display
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+            child: Image.network(widget.article.urlToImage, fit: BoxFit.cover),
+          ),
+          // Title display
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              widget.article.title,
+              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+            ),
+          ),
+          // Description display
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(widget.article.description),
+          ),
+          // Like, bookmark, and share buttons
+          ButtonBar(
+            alignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: toggleLike,
+                child: Icon(
+                  liked ? Icons.favorite : Icons.favorite_outline,
+                  color: liked ? Colors.red : null,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => toggleBookmark(context),
+                child: Icon(
+                  isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                  color: isBookmarked ? Colors.black : null,
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.share),
+                onPressed: () {
+                  // Implement share functionality here
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// NewsArticle model
+class NewsArticle {
+  final String title;
+  final String description;
+  final String urlToImage;
+
+  NewsArticle({
+    required this.title,
+    required this.description,
+    required this.urlToImage,
+  });
+
+  factory NewsArticle.fromJson(Map<String, dynamic> json) {
+    return NewsArticle(
+      title: json['title'] ?? 'No title available',
+      description: json['description'] ?? 'No description available',
+      urlToImage: json['urlToImage'] ?? '',
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is NewsArticle &&
+        other.title == title &&
+        other.description == description &&
+        other.urlToImage == urlToImage;
+  }
+
+  @override
+  int get hashCode =>
+      title.hashCode ^ description.hashCode ^ urlToImage.hashCode;
 }

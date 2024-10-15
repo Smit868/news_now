@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_now/screens/home_page.dart';
-// import 'package:share_plus/share_plus.dart'; // Import share_plus
-
-import 'recentnews_page.dart'; // Import the main file where your `bookmarkedArticles` is defined
+import 'package:news_now/global.dart';
 
 class BookmarkPage extends StatefulWidget {
   @override
@@ -20,29 +17,20 @@ class _BookmarkPageState extends State<BookmarkPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: ((context) =>
-                        HomePageContent()))); // Go back to the previous page
+            Navigator.pop(context); // Go back to the previous page
           },
         ),
         centerTitle: true,
         title: Text(
           'BOOKMARK',
           style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20, // Adjusted font size
-          ),
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
         ),
       ),
       body: bookmarkedArticles.isEmpty
           ? Center(
-              child: Text(
-                'No bookmarks available',
-                style: TextStyle(fontSize: 18, color: Colors.grey),
-              ),
+              child: Text('No bookmarks available',
+                  style: TextStyle(fontSize: 18, color: Colors.grey)),
             )
           : ListView.builder(
               padding: EdgeInsets.all(16),
@@ -52,16 +40,11 @@ class _BookmarkPageState extends State<BookmarkPage> {
                 return BookmarkNewsCard(
                   article: article,
                   onBookmarkRemoved: () {
-                    // Remove the article from bookmarks
                     setState(() {
                       bookmarkedArticles.remove(article);
                     });
-                    // Show "Bookmark removed" snackbar
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Bookmark removed'),
-                        duration: Duration(seconds: 2),
-                      ),
+                      SnackBar(content: Text('Bookmark removed')),
                     );
                   },
                 );
@@ -76,11 +59,6 @@ class BookmarkNewsCard extends StatelessWidget {
   final VoidCallback onBookmarkRemoved;
 
   BookmarkNewsCard({required this.article, required this.onBookmarkRemoved});
-
-  // void shareArticle() {
-  //   Share.share(
-  //       'Check out this news: ${article.title}\n\n${article.description}\n\nRead more at: ${article.urlToImage}');
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -109,14 +87,14 @@ class BookmarkNewsCard extends StatelessWidget {
             alignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon: Icon(Icons.bookmark_remove),
-                onPressed: () {
-                  onBookmarkRemoved();
-                },
+                icon: Icon(Icons.bookmark),
+                onPressed: onBookmarkRemoved,
               ),
               IconButton(
                 icon: Icon(Icons.share),
-                onPressed: () {},
+                onPressed: () {
+                  // Implement share functionality here
+                },
               ),
             ],
           ),
