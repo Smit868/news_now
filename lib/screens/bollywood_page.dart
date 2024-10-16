@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:news_now/screens/business_page.dart';
 import 'dart:convert';
-// Shared bookmark page
+import 'package:news_now/global.dart'; // Import the global bookmark list
 
-class EntertainmentNewsPage extends StatefulWidget {
+class HollywoodNewsPage extends StatefulWidget {
   @override
-  _EntertainmentNewsPageState createState() => _EntertainmentNewsPageState();
+  _HollywoodNewsPageState createState() => _HollywoodNewsPageState();
 }
 
-class _EntertainmentNewsPageState extends State<EntertainmentNewsPage> {
-  Future<List<NewsArticle>> fetchEntertainmentNews() async {
+class _HollywoodNewsPageState extends State<HollywoodNewsPage> {
+  Future<List<NewsArticle>> fetchSportsNews() async {
     final response = await http.get(Uri.parse(
         'https://newsapi.org/v2/top-headlines?category=entertainment&country=us&apiKey=1a261517516e45e3867d3aba993f1c6a'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
       final articles = jsonResponse['articles'] as List;
-      return articles
-          .map((article) => NewsArticle.fromJson(article))
-          .take(10)
-          .toList(); // Limit to 10 articles
+      return articles.map((article) {
+        return NewsArticle.fromJson(article);
+      }).toList(); // No limit for articles now
     } else {
-      throw Exception('Failed to load entertainment news');
+      throw Exception('Failed to load hollywood news');
     }
   }
 
@@ -41,14 +39,14 @@ class _EntertainmentNewsPageState extends State<EntertainmentNewsPage> {
         backgroundColor: Colors.blue,
       ),
       body: FutureBuilder<List<NewsArticle>>(
-        future: fetchEntertainmentNews(),
+        future: fetchSportsNews(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Failed to load entertainment news'));
+            return Center(child: Text('Failed to load sports news'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No entertainment news available'));
+            return Center(child: Text('No sports news available'));
           } else {
             final articles = snapshot.data!;
             return ListView.builder(
@@ -61,6 +59,100 @@ class _EntertainmentNewsPageState extends State<EntertainmentNewsPage> {
             );
           }
         },
+      ),
+    );
+  }
+}
+
+class NewsCard extends StatefulWidget {
+  final NewsArticle article;
+
+  NewsCard({required this.article});
+
+  @override
+  _NewsCardState createState() => _NewsCardState();
+}
+
+class _NewsCardState extends State<NewsCard> {
+  bool liked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    liked = false; // Initialize liked state
+  }
+
+  void toggleLike() {
+    setState(() {
+      liked = !liked;
+    });
+  }
+
+  void toggleBookmark(BuildContext context) {
+    setState(() {
+      if (bookmarkedArticles.contains(widget.article)) {
+        bookmarkedArticles.remove(widget.article); // Remove from bookmarks
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bookmark removed')),
+        );
+      } else {
+        bookmarkedArticles.add(widget.article); // Add to bookmarks
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bookmark added')),
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isBookmarked = bookmarkedArticles.contains(widget.article);
+
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+            child: Image.network(widget.article.urlToImage, fit: BoxFit.cover),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(widget.article.title,
+                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(widget.article.description),
+          ),
+          ButtonBar(
+            alignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: toggleLike,
+                child: Icon(
+                  liked ? Icons.favorite : Icons.favorite_outline,
+                  color: liked ? Colors.red : null,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => toggleBookmark(context),
+                child: Icon(
+                  isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                  color: isBookmarked ? Colors.black : null,
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.share),
+                onPressed: () {
+                  // Implement share functionality here
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

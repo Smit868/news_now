@@ -290,7 +290,7 @@ class HomeScreen extends StatelessWidget {
     } else if (title == 'HOLLYWOOD') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => EntertainmentNewsPage()),
+        MaterialPageRoute(builder: (context) => HollywoodNewsPage()),
       );
     } else if (title == 'TECHNOLOGY') {
       Navigator.push(

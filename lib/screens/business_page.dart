@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-// Global list for bookmarked articles (same as in other news pages)
-List<NewsArticle> bookmarkedArticles = [];
+import 'package:news_now/global.dart'; // Import the global bookmark list
 
 class BusinessNewsPage extends StatefulWidget {
   @override
@@ -11,21 +9,16 @@ class BusinessNewsPage extends StatefulWidget {
 }
 
 class _BusinessNewsPageState extends State<BusinessNewsPage> {
-  // Fetching business news with API
-  Future<List<NewsArticle>> fetchBusinessNews() async {
+  Future<List<NewsArticle>> fetchSportsNews() async {
     final response = await http.get(Uri.parse(
         'https://newsapi.org/v2/top-headlines?category=business&country=us&apiKey=1a261517516e45e3867d3aba993f1c6a'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
       final articles = jsonResponse['articles'] as List;
-      return articles
-          .map((article) {
-            return NewsArticle.fromJson(
-                {...article, 'category': 'Business News'});
-          })
-          .take(10)
-          .toList(); // Limit the news to 10 articles
+      return articles.map((article) {
+        return NewsArticle.fromJson(article);
+      }).toList(); // No limit for articles now
     } else {
       throw Exception('Failed to load business news');
     }
@@ -42,21 +35,18 @@ class _BusinessNewsPageState extends State<BusinessNewsPage> {
           },
         ),
         centerTitle: true,
-        title: Text(
-          'BUSINESS NEWS',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text('BUSINESS NEWS', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.blue,
       ),
       body: FutureBuilder<List<NewsArticle>>(
-        future: fetchBusinessNews(),
+        future: fetchSportsNews(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Failed to load business news'));
+            return Center(child: Text('Failed to load sports news'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No business news available'));
+            return Center(child: Text('No sports news available'));
           } else {
             final articles = snapshot.data!;
             return ListView.builder(
@@ -74,7 +64,6 @@ class _BusinessNewsPageState extends State<BusinessNewsPage> {
   }
 }
 
-// NewsCard widget for displaying individual news items
 class NewsCard extends StatefulWidget {
   final NewsArticle article;
 
@@ -86,67 +75,58 @@ class NewsCard extends StatefulWidget {
 
 class _NewsCardState extends State<NewsCard> {
   bool liked = false;
-  bool isBookmarked = false;
 
-  // Toggle the like button
+  @override
+  void initState() {
+    super.initState();
+    liked = false; // Initialize liked state
+  }
+
   void toggleLike() {
     setState(() {
       liked = !liked;
     });
   }
 
-  // Toggle bookmark functionality
   void toggleBookmark(BuildContext context) {
-    if (!bookmarkedArticles.contains(widget.article)) {
-      setState(() {
-        isBookmarked = true;
-        bookmarkedArticles.add(widget.article);
-      });
-      // Show snackbar: "Bookmark added"
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Bookmark added'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    } else {
-      // Show snackbar: "Already added in bookmark"
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Already bookmarked'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
+    setState(() {
+      if (bookmarkedArticles.contains(widget.article)) {
+        bookmarkedArticles.remove(widget.article); // Remove from bookmarks
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bookmark removed')),
+        );
+      } else {
+        bookmarkedArticles.add(widget.article); // Add to bookmarks
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bookmark added')),
+        );
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final isBookmarked = bookmarkedArticles.contains(widget.article);
+
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image display
           ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
             child: Image.network(widget.article.urlToImage, fit: BoxFit.cover),
           ),
-          // Title display
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-              widget.article.title,
-              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
-            ),
+            child: Text(widget.article.title,
+                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
           ),
-          // Description display
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(widget.article.description),
           ),
-          // Like, bookmark, and share buttons
           ButtonBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -176,39 +156,4 @@ class _NewsCardState extends State<NewsCard> {
       ),
     );
   }
-}
-
-// NewsArticle model
-class NewsArticle {
-  final String title;
-  final String description;
-  final String urlToImage;
-
-  NewsArticle({
-    required this.title,
-    required this.description,
-    required this.urlToImage,
-  });
-
-  factory NewsArticle.fromJson(Map<String, dynamic> json) {
-    return NewsArticle(
-      title: json['title'] ?? 'No title available',
-      description: json['description'] ?? 'No description available',
-      urlToImage: json['urlToImage'] ?? '',
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is NewsArticle &&
-        other.title == title &&
-        other.description == description &&
-        other.urlToImage == urlToImage;
-  }
-
-  @override
-  int get hashCode =>
-      title.hashCode ^ description.hashCode ^ urlToImage.hashCode;
 }

@@ -1,5 +1,4 @@
 // global.dart
-import 'package:flutter/material.dart';
 
 // Global list for bookmarked articles
 List<NewsArticle> bookmarkedArticles = [];

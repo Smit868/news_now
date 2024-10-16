@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_now/global.dart';
+import 'package:news_now/screens/home_page.dart';
 
 class BookmarkPage extends StatefulWidget {
   @override
@@ -17,7 +18,11 @@ class _BookmarkPageState extends State<BookmarkPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Go back to the previous page
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) =>
+                        HomePageContent()))); // Go back to the previous page
           },
         ),
         centerTitle: true,
@@ -87,7 +92,7 @@ class BookmarkNewsCard extends StatelessWidget {
             alignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon: Icon(Icons.bookmark),
+                icon: Icon(Icons.bookmark_remove),
                 onPressed: onBookmarkRemoved,
               ),
               IconButton(
