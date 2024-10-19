@@ -14,6 +14,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _obscureText = true; // To toggle password visibility
 
   @override
   void dispose() {
@@ -96,7 +97,7 @@ class _SignUpPageState extends State<SignUpPage> {
             const SizedBox(height: 20),
             TextField(
               controller: _passwordController,
-              obscureText: true,
+              obscureText: _obscureText, // Toggle password visibility
               decoration: InputDecoration(
                 hintText: 'Password',
                 filled: true,
@@ -104,6 +105,16 @@ class _SignUpPageState extends State<SignUpPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide.none,
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
                 ),
               ),
             ),

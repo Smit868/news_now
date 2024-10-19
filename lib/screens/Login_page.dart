@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:news_now/screens/forgot_password.dart';
 import 'package:news_now/screens/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,6 +18,8 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isPasswordVisible = false; // Password visibility toggle
+  bool _rememberMe = false; // Remember Me toggle
 
   @override
   void dispose() {
@@ -37,6 +41,8 @@ class _LoginPageState extends State<LoginPage> {
         );
       });
     }
+
+    _loadSavedCredentials();
   }
 
   Future<void> _login() async {
@@ -56,6 +62,13 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
+
+      if (_rememberMe) {
+        _saveCredentials(
+            email, password); // Save email/password if Remember Me is checked
+      } else {
+        _clearSavedCredentials(); // Clear saved credentials if Remember Me is unchecked
+      }
 
       Navigator.pushReplacement(
         context,
@@ -83,83 +96,163 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future<void> _saveCredentials(String email, String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+    await prefs.setString('password', password);
+  }
+
+  Future<void> _clearSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('email');
+    await prefs.remove('password');
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedEmail = prefs.getString('email');
+    String? savedPassword = prefs.getString('password');
+
+    if (savedEmail != null && savedPassword != null) {
+      _emailController.text = savedEmail;
+      _passwordController.text = savedPassword;
+      setState(() {
+        _rememberMe = true; // Check Remember Me if credentials are saved
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Login Page',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 40),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                hintText: 'Email',
-                filled: true,
-                fillColor: Colors.grey[300],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: screenHeight * 0.05),
+              const Text(
+                'Login Page',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: screenHeight * 0.05),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  hintText: 'Email',
+                  filled: true,
+                  fillColor: Colors.grey[300],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                hintText: 'Password',
-                filled: true,
-                fillColor: Colors.grey[300],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
+              const SizedBox(height: 20),
+              TextField(
+                controller: _passwordController,
+                obscureText: !_isPasswordVisible, // Toggle password visibility
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  filled: true,
+                  fillColor: Colors.grey[300],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible =
+                            !_isPasswordVisible; // Toggle state
+                      });
+                    },
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: _login,
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text('Login', style: TextStyle(fontSize: 18)),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Don\'t have an account? '),
-                GestureDetector(
+              const SizedBox(height: 10),
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignUpPage()),
+                      MaterialPageRoute(
+                          builder: (context) => ForgotPasswordPage()),
                     );
                   },
                   child: const Text(
-                    'Sign Up',
+                    'Forgot Password?',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.blue,
                     ),
                   ),
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Checkbox(
+                    value: _rememberMe,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _rememberMe = value ?? false; // Update checkbox state
+                      });
+                    },
+                  ),
+                  const Text('Remember Me'),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _login,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  minimumSize: Size(screenWidth, 50),
+                ),
+                child: const Text('Login', style: TextStyle(fontSize: 18)),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Don\'t have an account? '),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignUpPage()),
+                      );
+                    },
+                    child: const Text(
+                      'Sign Up',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.05), // Space at the bottom
+            ],
+          ),
         ),
       ),
     );
