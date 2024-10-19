@@ -7,4 +7,8 @@ class NewsViewModel {
   Future<NewsTopHeadlineModel> fetchNewsTopHeadlineModelApi() async {
     return await _repo.fetchNewsTopHeadlineModelApi();
   }
+
+  Future<NewsTopHeadlineModel> fetchTrendingNewsModel() async {
+    return await _repo.fetchTrendingNewsModel();
+  }
 }

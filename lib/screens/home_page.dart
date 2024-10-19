@@ -213,14 +213,14 @@ class HomeScreen extends StatelessWidget {
         ),
         SizedBox(height: screenSize.height * 0.02),
         FutureBuilder<NewsTopHeadlineModel>(
-          future: NewsViewModel().fetchNewsTopHeadlineModelApi(),
+          future: NewsViewModel().fetchTrendingNewsModel(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return const Text('Failed to load trending news');
             } else {
-              var newsList = snapshot.data!.articles!.take(10).toList();
+              var newsList = snapshot.data!.articles!.take(100).toList();
               return Column(
                 children: newsList
                     .where((article) =>

@@ -11,7 +11,7 @@ class TrendingNewsPage extends StatefulWidget {
 class _TrendingNewsPageState extends State<TrendingNewsPage> {
   Future<List<NewsArticle>> fetchSportsNews() async {
     final response = await http.get(Uri.parse(
-        'https://newsapi.org/v2/top-headlines?country=us&apiKey=1a261517516e45e3867d3aba993f1c6a'));
+        'https://newsapi.org/v2/top-headlines?category=science&country=us&apiKey=1a261517516e45e3867d3aba993f1c6a'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
