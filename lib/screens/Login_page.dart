@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:news_now/landing_page.dart';
 import 'package:news_now/screens/forgot_password.dart';
 import 'package:news_now/screens/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -129,8 +130,25 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        toolbarHeight: 50,
+        backgroundColor: Colors.blue,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) =>
+                        Land()))); // Go back to the previous page
+          },
+        ),
         centerTitle: true,
+        title: Text(
+          'LOGIN',
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(

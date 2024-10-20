@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:news_now/landing_page.dart';
 import 'login_page.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -56,8 +57,25 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign Up'),
+        toolbarHeight: 50,
+        backgroundColor: Colors.blue,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) =>
+                        Land()))); // Go back to the previous page
+          },
+        ),
         centerTitle: true,
+        title: Text(
+          'SIGN UP',
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

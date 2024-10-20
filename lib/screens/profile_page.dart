@@ -5,6 +5,7 @@ import 'package:news_now/resources/save_data.dart';
 import 'package:news_now/screens/Login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:news_now/screens/home_page.dart';
 import 'package:news_now/screens/utils.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -91,8 +92,25 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 50,
+        backgroundColor: Colors.blue,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) =>
+                        HomePageContent()))); // Go back to the previous page
+          },
+        ),
         centerTitle: true,
-        title: Text('Profile'),
+        title: Text(
+          'PROFILE PAGE',
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+        ),
       ),
       body: SingleChildScrollView(
         child: Center(

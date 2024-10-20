@@ -21,4 +21,6 @@ class NewsArticle {
       urlToImage: json['urlToImage'] ?? '',
     );
   }
+
+  get url => null;
 }

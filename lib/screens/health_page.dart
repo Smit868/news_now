@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:news_now/global.dart'; // Import the global bookmark list
+import 'package:news_now/global.dart';
+import 'package:share_plus/share_plus.dart'; // Import the global bookmark list
 
 class HealthNewsPage extends StatefulWidget {
   @override
@@ -147,6 +148,10 @@ class _NewsCardState extends State<NewsCard> {
               IconButton(
                 icon: Icon(Icons.share),
                 onPressed: () {
+                  final String shareContent =
+                      '${widget.article.title}\n${widget.article}';
+                  Share.share(shareContent,
+                      subject: 'Check out this news article!');
                   // Implement share functionality here
                 },
               ),
