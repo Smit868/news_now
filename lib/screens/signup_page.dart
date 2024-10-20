@@ -65,7 +65,7 @@ class _SignUpPageState extends State<SignUpPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 100), // Space between app bar and content
+              const SizedBox(height: 80), // Space between app bar and content
               const Text(
                 'Sign Up Page',
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),

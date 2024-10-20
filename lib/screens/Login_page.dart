@@ -138,6 +138,9 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(
+                height: 50,
+              ),
               SizedBox(height: screenHeight * 0.05),
               const Text(
                 'Login Page',

@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:news_now/resources/save_data.dart';
 import 'package:news_now/screens/Login_page.dart';
-import 'package:news_now/screens/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:news_now/screens/utils.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,7 +16,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Uint8List? _image;
-  String? profileImageUrl; // Store the profile image URL here
+  String? profileImageUrl;
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -27,10 +26,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    fetchProfileData(); // Fetch profile data when the page loads
+    fetchProfileData();
   }
 
-  // Fetch user profile data from Firestore and display it
   Future<void> fetchProfileData() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -38,7 +36,6 @@ class _ProfilePageState extends State<ProfilePage> {
         throw Exception('No authenticated user');
       }
 
-      // Fetch the user document from Firestore
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
@@ -51,18 +48,14 @@ class _ProfilePageState extends State<ProfilePage> {
         phoneController.text = data['phoneno'] ?? '';
         birthController.text = data['birthdate'] ?? '';
 
-        // Fetch and display the profile image URL
         profileImageUrl = data['profileImageUrl'] ?? '';
-
-        // If image exists, set the state to load it
-        setState(() {}); // Trigger UI update with the fetched data
+        setState(() {});
       }
     } catch (e) {
       print('Error fetching profile data: $e');
     }
   }
 
-  // Function to save the profile
   void saveProfile() async {
     String name = nameController.text;
     String email = emailController.text;
@@ -87,7 +80,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  // Function to select an image
   void selectImage() async {
     Uint8List img = await pickImage(ImageSource.gallery);
     setState(() {
@@ -102,91 +94,103 @@ class _ProfilePageState extends State<ProfilePage> {
         centerTitle: true,
         title: Text('Profile'),
       ),
-      body: Center(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: 24),
-              Stack(
-                children: [
-                  // Display profile image: show from Firebase Storage URL if exists, else default avatar
-                  profileImageUrl != null && profileImageUrl!.isNotEmpty
-                      ? CircleAvatar(
-                          radius: 64,
-                          backgroundImage: NetworkImage(profileImageUrl!),
-                        )
-                      : _image != null
-                          ? CircleAvatar(
-                              radius: 64,
-                              backgroundImage: MemoryImage(_image!),
-                            )
-                          : CircleAvatar(
-                              radius: 65,
-                              backgroundImage: NetworkImage(
-                                  'https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg'),
-                            ),
-                  Positioned(
-                    child: IconButton(
-                      onPressed: selectImage,
-                      icon: Icon(Icons.add_a_photo),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 10,
+                  spreadRadius: 5,
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 24),
+                Stack(
+                  children: [
+                    profileImageUrl != null && profileImageUrl!.isNotEmpty
+                        ? CircleAvatar(
+                            radius: 64,
+                            backgroundImage: NetworkImage(profileImageUrl!),
+                          )
+                        : _image != null
+                            ? CircleAvatar(
+                                radius: 64,
+                                backgroundImage: MemoryImage(_image!),
+                              )
+                            : CircleAvatar(
+                                radius: 64,
+                                backgroundImage: NetworkImage(
+                                    'https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg'),
+                              ),
+                    Positioned(
+                      child: IconButton(
+                        onPressed: selectImage,
+                        icon: Icon(Icons.add_a_photo),
+                      ),
+                      bottom: -10,
+                      left: 80,
                     ),
-                    bottom: -10,
-                    left: 80,
+                  ],
+                ),
+                SizedBox(height: 25),
+                _buildTextField(nameController, 'Username'),
+                _buildTextField(emailController, 'E-mail'),
+                _buildTextField(phoneController, 'Phone Number'),
+                _buildTextField(birthController, 'Birthdate'),
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: saveProfile,
+                  child: Text('Save Profile'),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue,
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    textStyle: TextStyle(fontSize: 14), // Increase text size
                   ),
-                ],
-              ),
-              SizedBox(height: 25),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: 'Username',
-                  contentPadding: EdgeInsets.all(10),
-                  border: OutlineInputBorder(),
                 ),
-              ),
-              SizedBox(height: 24),
-              TextField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  hintText: 'e-mail',
-                  contentPadding: EdgeInsets.all(10),
-                  border: OutlineInputBorder(),
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  ),
+                  child: Text('Logout'),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    textStyle: TextStyle(fontSize: 14), // Increase text size
+                  ),
                 ),
-              ),
-              SizedBox(height: 24),
-              TextField(
-                controller: phoneController,
-                decoration: InputDecoration(
-                  hintText: 'Phone Number',
-                  contentPadding: EdgeInsets.all(10),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 24),
-              TextField(
-                controller: birthController,
-                decoration: InputDecoration(
-                  hintText: 'Birthdate',
-                  contentPadding: EdgeInsets.all(10),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: saveProfile,
-                child: Text('Save Profile'),
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.push(context,
-                    MaterialPageRoute(builder: ((context) => LoginPage()))),
-                child: Text('Logout'),
-              ),
-            ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String hintText) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hintText,
+          contentPadding: EdgeInsets.all(15), // Increased padding
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10), // Rounded corners
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.blue), // Focus color
           ),
         ),
       ),
