@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:news_now/resources/save_data.dart';
+import 'package:news_now/screens/Login_page.dart';
 import 'package:news_now/screens/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -98,6 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Profile'),
       ),
       body: Center(
@@ -175,6 +177,14 @@ class _ProfilePageState extends State<ProfilePage> {
               ElevatedButton(
                 onPressed: saveProfile,
                 child: Text('Save Profile'),
+              ),
+              SizedBox(
+                height: 24,
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: ((context) => LoginPage()))),
+                child: Text('Logout'),
               ),
             ],
           ),
